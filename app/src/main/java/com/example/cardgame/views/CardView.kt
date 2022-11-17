@@ -10,14 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.scale
 import androidx.core.graphics.set
+import com.example.cardgame.enums.PlayingCard
 
 
 // resource touch event
 //https://www.vogella.com/tutorials/AndroidTouch/article.html
 
-class CardView(context: Context, attrs: AttributeSet?=null, var card:String) : View(context, attrs){
+class CardView(context: Context, attrs: AttributeSet?=null,private var cardPath:String) : View(context, attrs){
     lateinit var bitmap : Bitmap
     lateinit var rect : Rect
+    lateinit var playingCard:PlayingCard
     var lastX:Float = 0.0f
     var lastY:Float = 0.0f
     var realWidth:Int = 0
@@ -25,26 +27,18 @@ class CardView(context: Context, attrs: AttributeSet?=null, var card:String) : V
     var spriteWidth:Int = 0
     var spriteHeight:Int = 0
     init{
+        setPlayingCard()
         setBitMap()
         setDimensions()
-        //setRandomPixels()
-        //setScale()
     }
 
-    private fun getAttributes(){
-        /*val h1 : String = attrs!!.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_height")
-        val w1 : String = attrs!!.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_width")
-        val inth1 : Int = parseXmlDPStringToInt(h1)
-        val intw1 : Int = parseXmlDPStringToInt(w1)
-        */
-    }
-
-    private fun setScale(){
-        bitmap.scale(100,200)
+    private fun setPlayingCard(){
+        playingCard = getCardFromPath(cardPath)
+        //printToTerminal("${playingCard.cardFamily} ${playingCard.value}")
     }
 
     private fun setBitMap(){
-        bitmap = getPlayingCard(context,"cards/${card}")
+        bitmap = getPlayingCard(context,"cards/${cardPath}")
         //bitmap = Bitmap.createBitmap(spriteWidth,spriteHeight,Bitmap.Config.ARGB_8888)
         rect = Rect(0,0,bitmap.width,bitmap.height)
     }
@@ -61,13 +55,9 @@ class CardView(context: Context, attrs: AttributeSet?=null, var card:String) : V
         layoutParams = ViewGroup.LayoutParams(realWidth,realHeight)
         x = (getScreenWidth()/2).toFloat() - spriteWidth/2
         y = (getScreenHeight()/2).toFloat() - spriteHeight/2
-    //x = convertDpToPixel(getScreenWidth()/2).toFloat()
+        //x = convertDpToPixel(getScreenWidth()/2).toFloat()
         //y = convertDpToPixel(getScreenHeight()/2).toFloat()
     }
-
-    /*private fun insideSelf(posX:Int,posY:Int):Boolean{
-        return (posX>=0 && posX<=spriteWidth) && (posY>=0 && posY<=spriteHeight)
-    }*/
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         //if(!insideSelf(event.x.toInt(),event.y.toInt()))return false
@@ -111,33 +101,9 @@ class CardView(context: Context, attrs: AttributeSet?=null, var card:String) : V
         return true
     }
 
-    private fun setRandomPixels(){
-        val width = bitmap.width
-        val height = bitmap.height
-        var x=0;var y=0;var alpha = 0xff000000
-        while(y<height){
-            x=0
-            while(x<width){
-                bitmap[x,y] = (alpha+getRandomInt(0x00ffffff)).toInt()
-                x++;
-            }
-            y++;
-        }
-    }
-
-    fun setPosition(){
-        x = 100.0f
-        y = 100.0f
-
-    }
-
     fun reDraw(){
         //printToTerminal("ReDrawCanvas")
         invalidate()
-    }
-
-    fun addNewView(){
-
     }
 
     override fun onDraw(canvas: Canvas){

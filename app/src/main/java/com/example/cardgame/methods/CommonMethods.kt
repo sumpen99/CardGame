@@ -4,6 +4,8 @@ import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.core.graphics.set
+import com.example.cardgame.enums.PlayingCard
 import com.example.cardgame.struct.PassedCheck
 import java.io.InputStream
 
@@ -62,6 +64,39 @@ fun getPlayingCard(context: Context,filePath: String) : Bitmap{
     inputStream.close()
     return img
 
+}
+
+fun getCardFromPath(cardPath : String) : PlayingCard{
+    val card = cardPath.split(".")[0].uppercase()
+    var i = 0
+    val cards = PlayingCard.values()
+    while(i<cards.size){
+        if(card == cards[i].name){return cards[i]}
+        i++;
+    }
+    return PlayingCard.JOKER
+}
+
+fun getAttributes(){
+    /*val h1 : String = attrs!!.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_height")
+    val w1 : String = attrs!!.getAttributeValue("http://schemas.android.com/apk/res/android", "layout_width")
+    val inth1 : Int = parseXmlDPStringToInt(h1)
+    val intw1 : Int = parseXmlDPStringToInt(w1)
+    */
+}
+
+fun setRandomPixels(){
+    /*val width = bitmap.width
+    val height = bitmap.height
+    var x=0;var y=0;var alpha = 0xff000000
+    while(y<height){
+        x=0
+        while(x<width){
+            bitmap[x,y] = (alpha+getRandomInt(0x00ffffff)).toInt()
+            x++;
+        }
+        y++;
+    }*/
 }
 
 fun logScreenDimensions(){
