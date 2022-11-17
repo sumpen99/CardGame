@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CardGame</string>
+    <string name="main_button">Add Card</string>
+</resources>
