@@ -8,8 +8,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.scale
-import androidx.core.graphics.set
 import com.example.cardgame.enums.PlayingCard
 
 

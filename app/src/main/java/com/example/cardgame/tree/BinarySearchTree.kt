@@ -27,12 +27,6 @@ class BinarySearchTree {
         return node
     }
 
-    fun insert(key: Int) {
-        if (root == null) root = getNewNode(key) else {
-            insertNewNode(root, key)
-        }
-    }
-
     private fun inOrderTraversal(node: Node?, nodes: Array<Node?>) {
         if (node != null) {
             inOrderTraversal(node.left, nodes)
@@ -80,7 +74,7 @@ class BinarySearchTree {
             return nodes
         }
 
-    fun searchForNode(key: Int): Node? {
+    private fun searchForNode(key: Int): Node? {
         var temp: Node?
         temp = root
         while (temp != null) {
@@ -130,11 +124,6 @@ class BinarySearchTree {
         return node
     }
 
-    fun delete(key: Int) {
-        if (root == null) return
-        deleteNode(root, key)
-    }
-
     private fun buildBalancedTree(nodes: Array<Node?>, start: Int, end: Int): Node? {
         if (start > end) {
             return null
@@ -153,18 +142,6 @@ class BinarySearchTree {
         storeNodesToList(nodes, node.left)
         nodes[staticCount++] = node
         storeNodesToList(nodes, node.right)
-    }
-
-    fun balanceTree() {
-        val nodes: Array<Node?> = arrayOfNulls<Node>(countNumberOfNodes(root))
-        staticCount = 0
-        storeNodesToList(nodes, root)
-        //root = null;
-        val n = nodes.size
-        val newRoot: Node?
-        newRoot = buildBalancedTree(nodes, 0, n - 1)
-        root = null
-        root = newRoot
     }
 
     private fun countNumberOfNodes(node: Node?): Int {
@@ -186,6 +163,29 @@ class BinarySearchTree {
         return if (Math.abs(leftSubTreeHeight - rightSubTreeHeight) > 1) {
             -1
         } else Math.max(leftSubTreeHeight, rightSubTreeHeight) + 1
+    }
+
+    fun insert(key: Int) {
+        if (root == null) root = getNewNode(key) else {
+            insertNewNode(root, key)
+        }
+    }
+
+    fun delete(key: Int) {
+        if (root == null) return
+        deleteNode(root, key)
+    }
+
+    fun balanceTree() {
+        val nodes: Array<Node?> = arrayOfNulls<Node>(countNumberOfNodes(root))
+        staticCount = 0
+        storeNodesToList(nodes, root)
+        //root = null;
+        val n = nodes.size
+        val newRoot: Node?
+        newRoot = buildBalancedTree(nodes, 0, n - 1)
+        root = null
+        root = newRoot
     }
 
     fun isBalanced(): Boolean{

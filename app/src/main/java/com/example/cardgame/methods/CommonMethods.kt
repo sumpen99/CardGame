@@ -4,7 +4,6 @@ import android.content.res.Resources.getSystem
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.core.graphics.set
 import com.example.cardgame.enums.PlayingCard
 import com.example.cardgame.struct.PassedCheck
 import java.io.InputStream

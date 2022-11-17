@@ -1,7 +1,6 @@
 package com.example.cardgame.enums
 
 enum class PlayingCard(val cardFamily: String,val value:Int) {
-    CLUBS_1("clubs",1),
     CLUBS_2("clubs",2),
     CLUBS_3("clubs",3),
     CLUBS_4("clubs",4),
@@ -16,7 +15,6 @@ enum class PlayingCard(val cardFamily: String,val value:Int) {
     CLUBS_KING("clubs",13),
     CLUBS_ACE("clubs",14),
 
-    DIAMONDS_1("diamonds",1),
     DIAMONDS_2("diamonds",2),
     DIAMONDS_3("diamonds",3),
     DIAMONDS_4("diamonds",4),
@@ -31,7 +29,6 @@ enum class PlayingCard(val cardFamily: String,val value:Int) {
     DIAMONDS_KING("diamonds",13),
     DIAMONDS_ACE("diamonds",14),
 
-    HEARTS_1("hearts",1),
     HEARTS_2("hearts",2),
     HEARTS_3("hearts",3),
     HEARTS_4("hearts",4),
@@ -46,7 +43,6 @@ enum class PlayingCard(val cardFamily: String,val value:Int) {
     HEARTS_KING("hearts",13),
     HEARTS_ACE("hearts",14),
 
-    SPADES_1("spades",1),
     SPADES_2("spades",2),
     SPADES_3("spades",3),
     SPADES_4("spades",4),

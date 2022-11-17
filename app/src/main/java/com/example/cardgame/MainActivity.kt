@@ -1,6 +1,7 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
 import com.example.cardgame.tree.BinarySearchTree
@@ -11,14 +12,28 @@ class MainActivity : AppCompatActivity() {
     private var deckOfCards : Array<String>? = null
     private val binding get() = _binding!!
     private val treeOfPlayingCards:BinarySearchTree = BinarySearchTree()
+    private val gameBoard:GameBoard = GameBoard(14,4)
     private var cardsDrawn : Int = 0
     private val CARDS_IN_A_DECK : Int = 52
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //logScreenDimensions()
+        logScreenDimensions() //Width: 1080 Height: 2154 Card Width: 234 Height: 333
+        // card ratio = 1.42307692
+        // card width = 0,216666667 * ScreenWidth
+        // card height = card width * 1.42307692
         loadCards()
-        printDeckOfCards(deckOfCards)
+        // setup GameBoard coordinates
+        //gameBoard.setCoordinates()
+        /*
+        *  *  *  *
+        *  *  *  *
+        *
+        *
+        *
+        *
+        * */
+        //printDeckOfCards(deckOfCards)
         setDataBinding()
         setEventListener()
     }
@@ -48,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         //printToTerminal("$rndCard")
         if(cardsDrawn == 10 && !treeOfPlayingCards.isBalanced()){treeOfPlayingCards.balanceTree()}
-        
+
         cardsDrawn++
         treeOfPlayingCards.insert(rndCard)
         binding.spriteViewLayout.addView(CardView(this,null,deckOfCards!![rndCard]),binding.spriteViewLayout.childCount)
