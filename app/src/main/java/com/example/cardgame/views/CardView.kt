@@ -9,21 +9,21 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.example.cardgame.enums.PlayingCard
+import com.example.cardgame.struct.BoardCell
 
 
 // resource touch event
 //https://www.vogella.com/tutorials/AndroidTouch/article.html
 
-class CardView(context: Context, attrs: AttributeSet?=null,private var cardPath:String) : View(context, attrs){
+class CardView(context: Context,
+               attrs: AttributeSet?=null,
+               private var cardPath:String,
+               private var boardCell:BoardCell) : View(context, attrs){
     lateinit var bitmap : Bitmap
     lateinit var rect : Rect
     lateinit var playingCard:PlayingCard
     var lastX:Float = 0.0f
     var lastY:Float = 0.0f
-    var realWidth:Int = 0
-    var realHeight:Int = 0
-    var spriteWidth:Int = 0
-    var spriteHeight:Int = 0
     init{
         setPlayingCard()
         setBitMap()
@@ -42,23 +42,14 @@ class CardView(context: Context, attrs: AttributeSet?=null,private var cardPath:
     }
 
     private fun setDimensions(){
-        //realWidth = convertDpToPixel(1000)
-        //realHeight = convertDpToPixel(1000)
-        //spriteWidth = convertDpToPixel(234)
-        //spriteHeight = convertDpToPixel(333)
-        spriteWidth = bitmap.width
-        spriteHeight = bitmap.height
-        realWidth = spriteWidth
-        realHeight = spriteHeight
-        layoutParams = ViewGroup.LayoutParams(realWidth,realHeight)
-        x = (getScreenWidth()/2).toFloat() - spriteWidth/2
-        y = (getScreenHeight()/2).toFloat() - spriteHeight/2
-        //x = convertDpToPixel(getScreenWidth()/2).toFloat()
-        //y = convertDpToPixel(getScreenHeight()/2).toFloat()
+        layoutParams = ViewGroup.LayoutParams(bitmap.width,bitmap.height)
+        //x = (getScreenWidth()/2).toFloat() - bitmap.width/2
+        //y = (getScreenHeight()/2).toFloat() - bitmap.height/2
+        x = boardCell.x
+        y = boardCell.y
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        //if(!insideSelf(event.x.toInt(),event.y.toInt()))return false
         //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
         val pointerIndex = event.actionIndex
         val pointerId = event.getPointerId(pointerIndex)

@@ -12,30 +12,21 @@ class MainActivity : AppCompatActivity() {
     private var deckOfCards : Array<String>? = null
     private val binding get() = _binding!!
     private val treeOfPlayingCards:BinarySearchTree = BinarySearchTree()
-    private val gameBoard:GameBoard = GameBoard(14,4)
+    private lateinit var gameBoard:GameBoard
     private var cardsDrawn : Int = 0
-    private val CARDS_IN_A_DECK : Int = 52
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logScreenDimensions() //Width: 1080 Height: 2154 Card Width: 234 Height: 333
-        // card ratio = 1.42307692
-        // card width = 0,216666667 * ScreenWidth
-        // card height = card width * 1.42307692
+        logScreenDimensions()
         loadCards()
-        // setup GameBoard coordinates
-        //gameBoard.setCoordinates()
-        /*
-        *  *  *  *
-        *  *  *  *
-        *
-        *
-        *
-        *
-        * */
+        setUpGameBoard()
         //printDeckOfCards(deckOfCards)
         setDataBinding()
         setEventListener()
+    }
+
+    private fun setUpGameBoard(){
+        gameBoard = GameBoard(getBoardRows(),getBoardCols())
     }
 
     private fun loadCards(){
@@ -55,18 +46,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addNewView(){
-        if(cardsDrawn == CARDS_IN_A_DECK)return
+        if(cardsDrawn == getCardsInADeck())return
         var rndCard:Int = getRandomInt(deckOfCards!!.size)
         while(treeOfPlayingCards.itemExist(rndCard)){
             rndCard = getRandomInt(deckOfCards!!.size)
         }
 
         //printToTerminal("$rndCard")
-        if(cardsDrawn == 10 && !treeOfPlayingCards.isBalanced()){treeOfPlayingCards.balanceTree()}
+        if(!treeOfPlayingCards.isBalanced()){treeOfPlayingCards.balanceTree()}
 
         cardsDrawn++
         treeOfPlayingCards.insert(rndCard)
-        binding.spriteViewLayout.addView(CardView(this,null,deckOfCards!![rndCard]),binding.spriteViewLayout.childCount)
+        binding.cardViewLayout.addView(
+            CardView(this,null,deckOfCards!![rndCard],gameBoard.getFreeBoardCell()),
+            binding.cardViewLayout.childCount)
     }
 
     override fun onDestroy() {

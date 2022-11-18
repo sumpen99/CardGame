@@ -6,6 +6,11 @@ class BoardCell {
     var occupied:Boolean = false
     var key:Int = -1
 
+    fun setPosition(posX:Float,posY:Float){
+        x=posX
+        y=posY
+    }
+
     fun resetCell(){
         key = -1
         occupied = false
