@@ -5,8 +5,6 @@ import com.example.cardgame.struct.BoardCell
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
     private var m: Array<BoardCell>
-    private var tempCount:Int = 0
-
     init{
         size = rows*columns
         m = Array(size){ BoardCell() }
@@ -31,6 +29,7 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
     }
 
+    // TODO temporary, change to something better
     fun getFreeBoardCell():BoardCell?{
         for(cell in m.iterator()){
             if(!cell.occupied){
