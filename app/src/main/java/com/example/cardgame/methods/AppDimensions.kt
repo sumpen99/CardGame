@@ -15,7 +15,7 @@ fun getOffsetXBetweenCards():Int{
 }
 
 fun getOffsetYBetweenCards():Int{
-    return getCardHeight()/3
+    return getCardHeight()/4
 }
 
 fun getCardWidth():Int{

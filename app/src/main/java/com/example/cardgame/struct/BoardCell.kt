@@ -11,6 +11,10 @@ class BoardCell {
         y=posY
     }
 
+    fun setOccupied(){
+        occupied = true
+    }
+
     fun resetCell(){
         key = -1
         occupied = false

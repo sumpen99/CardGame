@@ -1,6 +1,7 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
@@ -17,10 +18,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logScreenDimensions()
+        //logScreenDimensions()
         loadCards()
         setUpGameBoard()
-        //printDeckOfCards(deckOfCards)
         setDataBinding()
         setEventListener()
     }
@@ -57,9 +57,15 @@ class MainActivity : AppCompatActivity() {
 
         cardsDrawn++
         treeOfPlayingCards.insert(rndCard)
+        val cell = gameBoard.getFreeBoardCell()
+        assert(cell!=null) // if null we done something terrible wrong
         binding.cardViewLayout.addView(
-            CardView(this,null,deckOfCards!![rndCard],gameBoard.getFreeBoardCell()),
+            CardView(this,null,deckOfCards!![rndCard],cell!!,::removeCardView),
             binding.cardViewLayout.childCount)
+    }
+
+    private fun removeCardView(cardView: View){
+        binding.cardViewLayout.removeView(cardView)
     }
 
     override fun onDestroy() {

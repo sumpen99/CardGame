@@ -1,5 +1,4 @@
 package com.example.cardgame.views
-import com.example.cardgame.methods.*
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,8 +8,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.example.cardgame.enums.PlayingCard
+import com.example.cardgame.methods.getCardFromPath
+import com.example.cardgame.methods.getPlayingCard
+import com.example.cardgame.methods.printToTerminal
 import com.example.cardgame.struct.BoardCell
-
 
 // resource touch event
 //https://www.vogella.com/tutorials/AndroidTouch/article.html
@@ -18,12 +19,16 @@ import com.example.cardgame.struct.BoardCell
 class CardView(context: Context,
                attrs: AttributeSet?=null,
                private var cardPath:String,
-               private var boardCell:BoardCell) : View(context, attrs){
+               private var boardCell:BoardCell,
+               val callbackDestroy:(View)->Unit) : View(context, attrs){
     lateinit var bitmap : Bitmap
     lateinit var rect : Rect
     lateinit var playingCard:PlayingCard
     var lastX:Float = 0.0f
     var lastY:Float = 0.0f
+    var lastZ:Float = -1.0f
+    private val CLICK_RATIO = 150
+    private var leftLastClick: Long = 0
     init{
         setPlayingCard()
         setBitMap()
@@ -47,6 +52,7 @@ class CardView(context: Context,
         //y = (getScreenHeight()/2).toFloat() - bitmap.height/2
         x = boardCell.x
         y = boardCell.y
+
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -58,8 +64,17 @@ class CardView(context: Context,
         //printToTerminal("$maskedAction")
         when(maskedAction) {
             MotionEvent.ACTION_DOWN -> {
-                lastX = event.rawX
-                lastY = event.rawY
+                if(isDoubleTap()){
+                    //printToTerminal("DoubleTap")
+                    removeSelfFromParent()
+                }
+                else{
+                    lastX = event.rawX
+                    lastY = event.rawY
+                }
+                //printToTerminal("$z")
+                //storeZ()
+                //putViewOnTop()
                 //printToTerminal("TouchDown")
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
@@ -76,6 +91,8 @@ class CardView(context: Context,
                 //printToTerminal("TouchMove")
             }
             MotionEvent.ACTION_UP -> {
+                setDoubleTapTimer()
+                //resetZ()
                 //printToTerminal("TouchUp")
             }
             MotionEvent.ACTION_POINTER_UP -> {
@@ -88,6 +105,30 @@ class CardView(context: Context,
         //invalidate()
 
         return true
+    }
+
+    private fun removeSelfFromParent(){
+        callbackDestroy(this)
+    }
+
+    private fun isDoubleTap():Boolean{
+        return System.currentTimeMillis()-leftLastClick<=CLICK_RATIO
+    }
+
+    private fun setDoubleTapTimer(){
+        leftLastClick = System.currentTimeMillis()
+    }
+
+    private fun storeZ(){
+        lastZ = z
+    }
+
+    private fun putViewOnTop(){
+        z = 1.0f
+    }
+
+    private fun resetZ(){
+        z = lastZ
     }
 
     fun reDraw(){

@@ -29,12 +29,16 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             m[i].setPosition(x,y)
             i++
         }
-        //printGameBoard(m)
-
     }
 
-    fun getFreeBoardCell():BoardCell{
-        return m[tempCount++]
+    fun getFreeBoardCell():BoardCell?{
+        for(cell in m.iterator()){
+            if(!cell.occupied){
+                cell.setOccupied()
+                return cell
+            }
+        }
+        return null
     }
 
     fun getValue(row: Int, col: Int): BoardCell {
@@ -47,23 +51,6 @@ class GameBoard(private var rows:Int,private var columns:Int) {
 
     fun getIndex(row: Int, col: Int): Int {
         return row * columns + col
-    }
-
-    fun flipVertical() {
-        var c: Int
-        var r = 0
-        var j: Int
-        while (r < rows / 2) {
-            c = rows - 1 - r
-            j = 0
-            while (j < columns) {
-                val temp = m[r * columns + j]
-                m[r * columns + j] = m[c * columns + j]
-                m[c * columns + j] = temp
-                j++
-            }
-            r++
-        }
     }
 
     fun getColFromIndex(index: Int): Int {
