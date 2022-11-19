@@ -19,8 +19,9 @@ import com.example.cardgame.struct.BoardCell
 class CardView(context: Context,
                attrs: AttributeSet?=null,
                private var cardPath:String,
-               private var boardCell:BoardCell,
-               val callbackDestroy:(View)->Unit) : View(context, attrs){
+               var boardCell:BoardCell,
+               val callbackDestroy:(CardView)->Unit,
+               val callbackTouch:(CardView)->Boolean) : View(context, attrs){
     lateinit var bitmap : Bitmap
     lateinit var rect : Rect
     lateinit var playingCard:PlayingCard
@@ -62,59 +63,61 @@ class CardView(context: Context,
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
-        val pointerIndex = event.actionIndex
-        val pointerId = event.getPointerId(pointerIndex)
-        val maskedAction = event.actionMasked
-        val touchAction = event.action and MotionEvent.ACTION_MASK
-        //printToTerminal("$maskedAction")
-        when(maskedAction) {
-            MotionEvent.ACTION_DOWN -> {
-                if(isDoubleTap()){
-                    //printToTerminal("DoubleTap")
-                    removeSelfFromParent()
+        if(callbackTouch(this)){
+            //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
+            val pointerIndex = event.actionIndex
+            val pointerId = event.getPointerId(pointerIndex)
+            val maskedAction = event.actionMasked
+            val touchAction = event.action and MotionEvent.ACTION_MASK
+            //printToTerminal("$maskedAction")
+            when(maskedAction) {
+                MotionEvent.ACTION_DOWN -> {
+                    if(isDoubleTap()){
+                        //printToTerminal("DoubleTap")
+                        removeSelfFromParent()
+                    }
+                    else{
+                        lastX = event.rawX
+                        lastY = event.rawY
+                    }
+                    //printToTerminal("$z")
+                    //storeZ()
+                    //putViewOnTop()
+                    //printToTerminal("TouchDown")
                 }
-                else{
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    //printToTerminal("PointerDown")
+
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val mx = event.rawX - lastX
+                    val my = event.rawY - lastY
+                    x+=mx
+                    y+=my
                     lastX = event.rawX
                     lastY = event.rawY
+                    //printToTerminal("TouchMove")
                 }
-                //printToTerminal("$z")
-                //storeZ()
-                //putViewOnTop()
-                //printToTerminal("TouchDown")
+                MotionEvent.ACTION_UP -> {
+                    setDoubleTapTimer()
+                    resetPosition()
+                    //resetZ()
+                    //printToTerminal("TouchUp")
+                }
+                MotionEvent.ACTION_POINTER_UP -> {
+                    //printToTerminal("PointerUp")
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    //printToTerminal("TouchCancel")
+                }
             }
-            MotionEvent.ACTION_POINTER_DOWN -> {
-                //printToTerminal("PointerDown")
-
-            }
-            MotionEvent.ACTION_MOVE -> {
-                val mx = event.rawX - lastX
-                val my = event.rawY - lastY
-                x+=mx
-                y+=my
-                lastX = event.rawX
-                lastY = event.rawY
-                //printToTerminal("TouchMove")
-            }
-            MotionEvent.ACTION_UP -> {
-                setDoubleTapTimer()
-                //resetZ()
-                //printToTerminal("TouchUp")
-            }
-            MotionEvent.ACTION_POINTER_UP -> {
-                //printToTerminal("PointerUp")
-            }
-            MotionEvent.ACTION_CANCEL -> {
-                //printToTerminal("TouchCancel")
-            }
+            //invalidate()
         }
-        //invalidate()
-
         return true
     }
 
     private fun removeSelfFromParent(){
-        boardCell.makeCellFree()
+        //boardCell.makeCellFree()
         callbackDestroy(this)
     }
 
@@ -136,6 +139,11 @@ class CardView(context: Context,
 
     private fun resetZ(){
         z = lastZ
+    }
+
+    private fun resetPosition(){
+        x = boardCell.x
+        y = boardCell.y
     }
 
     fun reDraw(){

@@ -1,7 +1,10 @@
 package com.example.cardgame
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
@@ -38,11 +41,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setEventListener(){
-        val txtBtn = binding.mainBtn
-        txtBtn.setOnClickListener(){
+        val imgBtn = binding.mainBtn
+        /*txtBtn.setOnClickListener(){
             addNewView(getCardsToDraw())
-        }
+        }*/
+
+        imgBtn.setOnTouchListener(object:OnTouchListener{
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        imgBtn.imageAlpha = 127
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        imgBtn.imageAlpha=255
+                        addNewView(getCardsToDraw())
+                    }
+                }
+                return true
+            }
+        })
     }
 
     private fun addNewView(cardsToAdd:Int){
@@ -52,14 +71,25 @@ class MainActivity : AppCompatActivity() {
             val boardCell = gameBoard.getFreeBoardCell(i)
             assert(boardCell!=null) // if null we done something terrible wrong
             binding.cardViewLayout.addView(
-                CardView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView),
+                CardView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::cardViewIsFree),
                 binding.cardViewLayout.childCount)
             i++
             cardsDrawn++
         }
     }
 
-    private fun removeCardView(cardView: View){
+    /**
+     * CALLBACK TO CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
+     * */
+    private fun cardViewIsFree(cardView: CardView):Boolean{
+        return gameBoard.validTouch(cardView.boardCell.index)
+    }
+
+    /**
+     * CALLBACK TO REMOVE CARDVIEW FROM GAMEBOARD
+     * */
+    private fun removeCardView(cardView: CardView){
+        cardView.boardCell.makeCellFree()
         binding.cardViewLayout.removeView(cardView)
     }
 
