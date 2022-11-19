@@ -85,6 +85,17 @@ class BinarySearchTree {
         return null
     }
 
+    private fun reachedMaxCount(key: Int,maxNum:Int): Node? {
+        var temp: Node?
+        temp = root
+        while (temp != null) {
+            if(temp.key == key && temp.count>=maxNum){return temp}
+            else if (key < temp.key){temp = temp.left}
+            else{temp = temp.right}
+        }
+        return null
+    }
+
     private fun minValueNode(node: Node): Node? {
         var current: Node? = node
         while(current != null && current.left != null) {
@@ -166,8 +177,13 @@ class BinarySearchTree {
     }
 
     fun insert(key: Int) {
-        if (root == null) root = getNewNode(key) else {
+        if(root == null){ root = getNewNode(key)}
+        else{
             insertNewNode(root, key)
+            if(!isBalanced()){
+                printToTerminal("Not Balanced")
+                balanceTree()
+            }
         }
     }
 
@@ -194,5 +210,9 @@ class BinarySearchTree {
 
     fun itemExist(key:Int):Boolean{
         return searchForNode(key) != null
+    }
+
+    fun itemReachedMaxCount(key:Int,maxCount:Int):Boolean{
+        return reachedMaxCount(key,maxCount) != null
     }
 }

@@ -47,3 +47,11 @@ fun getNeededSpace():Int{
 fun getCardsInADeck():Int{
     return 52
 }
+
+fun getCardsToDraw():Int{
+    return 4
+}
+
+fun getDecksToUse():Int{
+    return 1
+}

@@ -5,15 +5,14 @@ import android.view.View
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
-import com.example.cardgame.tree.BinarySearchTree
+import com.example.cardgame.struct.DeckOfCards
 import com.example.cardgame.views.CardView
 
 class MainActivity : AppCompatActivity() {
-    private var _binding: ActivityMainBinding? = null
-    private var deckOfCards : Array<String>? = null
-    private val binding get() = _binding!!
-    private val treeOfPlayingCards:BinarySearchTree = BinarySearchTree()
+    private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         setUpGameBoard()
         setDataBinding()
         setEventListener()
+        addNewView(getCardsToDraw())
     }
 
     private fun setUpGameBoard(){
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadCards(){
-        deckOfCards = assets.list("cards")
+        deckOfCards = DeckOfCards(assets.list("cards")!!)
     }
 
     private fun setDataBinding(){
@@ -41,27 +41,22 @@ class MainActivity : AppCompatActivity() {
     private fun setEventListener(){
         val txtBtn = binding.mainBtn
         txtBtn.setOnClickListener(){
-            addNewView()
+            addNewView(getCardsToDraw())
         }
     }
 
-    private fun addNewView(){
-        if(cardsDrawn == getCardsInADeck())return
-        var rndCard:Int = getRandomInt(deckOfCards!!.size)
-        while(treeOfPlayingCards.itemExist(rndCard)){
-            rndCard = getRandomInt(deckOfCards!!.size)
+    private fun addNewView(cardsToAdd:Int){
+        if(cardsDrawn > getCardsInADeck()-cardsToAdd)return
+        var i = 0
+        while(i<cardsToAdd){
+            val boardCell = gameBoard.getFreeBoardCell(i)
+            assert(boardCell!=null) // if null we done something terrible wrong
+            binding.cardViewLayout.addView(
+                CardView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView),
+                binding.cardViewLayout.childCount)
+            i++
+            cardsDrawn++
         }
-
-        //printToTerminal("$rndCard")
-        if(!treeOfPlayingCards.isBalanced()){treeOfPlayingCards.balanceTree()}
-
-        cardsDrawn++
-        treeOfPlayingCards.insert(rndCard)
-        val cell = gameBoard.getFreeBoardCell()
-        assert(cell!=null) // if null we done something terrible wrong
-        binding.cardViewLayout.addView(
-            CardView(this,null,deckOfCards!![rndCard],cell!!,::removeCardView),
-            binding.cardViewLayout.childCount)
     }
 
     private fun removeCardView(cardView: View){

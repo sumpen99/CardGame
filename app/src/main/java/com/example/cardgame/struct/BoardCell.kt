@@ -15,6 +15,10 @@ class BoardCell {
         occupied = true
     }
 
+    fun setKeyValue(k:Int){
+        key = k
+    }
+
     fun resetCell(){
         key = -1
         occupied = false
@@ -22,7 +26,7 @@ class BoardCell {
         y = 0.0f
     }
 
-    fun clearCell(){
+    fun makeCellFree(){
         key = -1
         occupied = false
     }

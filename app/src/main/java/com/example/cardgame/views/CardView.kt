@@ -33,6 +33,7 @@ class CardView(context: Context,
         setPlayingCard()
         setBitMap()
         setDimensions()
+        setBoardCell()
     }
 
     private fun setPlayingCard(){
@@ -44,6 +45,11 @@ class CardView(context: Context,
         bitmap = getPlayingCard(context,"cards/${cardPath}")
         //bitmap = Bitmap.createBitmap(spriteWidth,spriteHeight,Bitmap.Config.ARGB_8888)
         rect = Rect(0,0,bitmap.width,bitmap.height)
+    }
+
+    private fun setBoardCell(){
+        boardCell.setOccupied()
+        //boardCell.setKeyValue()
     }
 
     private fun setDimensions(){
@@ -108,6 +114,7 @@ class CardView(context: Context,
     }
 
     private fun removeSelfFromParent(){
+        boardCell.makeCellFree()
         callbackDestroy(this)
     }
 

@@ -17,7 +17,7 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         val cardWidth = getCardWidth()
         val cardHeight = getCardHeight()
         var rowOneX:Float = ((getScreenWidth()/2)-(offsetWidth*1.5)-(cardWidth*1.5)).toFloat()
-        var colOne:Float = (getCardHeight()/2).toFloat()
+        var colOne:Float = (cardHeight/2).toFloat()
         rowOneX-=cardWidth/2
         colOne-=cardHeight/2
         var i = 0
@@ -29,13 +29,13 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
     }
 
-    // TODO temporary, change to something better
-    fun getFreeBoardCell():BoardCell?{
-        for(cell in m.iterator()){
-            if(!cell.occupied){
-                cell.setOccupied()
-                return cell
+    fun getFreeBoardCell(index:Int):BoardCell?{
+        var col = index
+        while(col<size){
+            if(!m[col].occupied){
+                return m[col]
             }
+            col+=columns
         }
         return null
     }
