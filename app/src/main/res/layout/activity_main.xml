@@ -10,8 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cardViewLayout"
-        android:layout_width="394dp"
-        android:layout_height="545dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/mainBtn"
         app:layout_constraintEnd_toEndOf="parent"

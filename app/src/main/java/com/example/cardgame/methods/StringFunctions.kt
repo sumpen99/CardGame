@@ -13,6 +13,14 @@ fun getCardFromPath(cardPath : String) : PlayingCard {
     return PlayingCard.JOKER
 }
 
+fun cardFamilyEquals(cardOne:PlayingCard,cardTwo:PlayingCard):Boolean{
+    return cardOne.cardFamily == cardTwo.cardFamily
+}
+
+fun cardIsLess(cardOne:PlayingCard,cardTwo:PlayingCard):Boolean{
+    return cardOne.value < cardTwo.value
+}
+
 fun parseXmlDPStringToInt(str:String) : Int{
     var chr : PassedCheck = PassedCheck()
     val out = str.split(".")[0]

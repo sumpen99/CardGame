@@ -84,13 +84,14 @@ class MainActivity : AppCompatActivity() {
     private fun cardViewIsFree(cardView: CardView):Boolean{
         return gameBoard.validTouch(cardView.boardCell.index)
     }
-
-    /**
-     * CALLBACK TO REMOVE CARDVIEW FROM GAMEBOARD
+  /**
+     * CALLBACK TO REMOVE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
      * */
     private fun removeCardView(cardView: CardView){
-        cardView.boardCell.makeCellFree()
-        binding.cardViewLayout.removeView(cardView)
+        if(gameBoard.validRemove(cardView.boardCell)){
+            cardView.boardCell.makeCellFree()
+            binding.cardViewLayout.removeView(cardView)
+        }
     }
 
     override fun onDestroy() {

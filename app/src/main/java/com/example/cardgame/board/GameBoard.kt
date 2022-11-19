@@ -2,6 +2,7 @@ package com.example.cardgame.board
 import com.example.cardgame.enums.Direction
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
+import com.example.cardgame.struct.PassedCheck
 
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
@@ -20,7 +21,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         var rowOneX:Float = ((getScreenWidth()/2)-(offsetWidth*1.5)-(cardWidth*1.5)).toFloat()
         var colOne:Float = (cardHeight/2).toFloat()
         rowOneX-=cardWidth/2
+        rowOneX+=getFirstXOffset()
         colOne-=cardHeight/2
+        colOne+=getFirstYOffset()
         var i = 0
         while(i<size){
             val x = rowOneX+(i%columns*cardWidth)+(i%columns*offsetWidth)
@@ -37,21 +40,46 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return false
     }
 
-    /*fun searchDirection(cellRow:Int,cellCol:Int,dir: Direction):Boolean{
-        var row = cellRow
-        var col = cellCol
-        if(dir == Direction.NORTH){row-=1;}
-        else if(dir == Direction.SOUTH){row+=1;}
-        else if(dir == Direction.EAST){col+=1;}
-        else if(dir == Direction.WEST){col-=1;}
-        else if(dir == Direction.NORTH_EAST){row-=1;col+=1;}
-        else if(dir == Direction.NORTH_WEST){row-=1;col-=1;}
-        else if(dir == Direction.SOUTH_EAST){row+=1;col+=1;}
-        else if(dir == Direction.SOUTH_WEST){row+=1;col-=1;}
+    fun validRemove(cardToTest:BoardCell):Boolean{
+        val row = getRowFromIndex(cardToTest.index)
+        val col = getColFromIndex(cardToTest.index)
+        val cardSum = PassedCheck()
+        searchDirection(row,col-1,Direction.WEST,cardToTest,cardSum)
+        searchDirection(row,col+1,Direction.EAST,cardToTest,cardSum)
+        return cardSum.num>0
+    }
 
-        if(cellRow == rows-1 || (validRowCol(row,col) && !m[getIndex(row,col)].occupied)){return true}
+    private fun searchDirection(cellRow:Int,cellCol:Int,dir: Direction,cardToRemove:BoardCell,cardSum:PassedCheck){
+        if(cardSum.num==0 && (cellCol>=0 && cellCol < columns)){
+            if(dir == Direction.WEST){searchDirection(cellRow,cellCol-1,dir,cardToRemove,cardSum)}
+            if(dir == Direction.EAST){searchDirection(cellRow,cellCol+1,dir,cardToRemove,cardSum)}
+            val cardToTestAgainst = getLastCellInRow(getIndex(0,cellCol))
+            if(cardToTestAgainst.occupied){
+                if(cardCanBeRemoved(cardToRemove,cardToTestAgainst)){
+                    cardSum.num+=1
+                }
+            }
+        }
+    }
+
+    private fun cardCanBeRemoved(cellToRemove:BoardCell,cellToTestAgainst:BoardCell):Boolean{
+        if(cardFamilyEquals(cellToRemove.playingCard,cellToTestAgainst.playingCard)){
+            return cardIsLess(cellToRemove.playingCard,cellToTestAgainst.playingCard)
+        }
         return false
-    }*/
+    }
+
+    private fun getLastCellInRow(index:Int):BoardCell{
+        var currentIndex = index
+        var nextIndex = index+columns
+        var nextCell = getBoardCell(nextIndex)
+        while(nextCell!= null && nextCell.occupied){
+            currentIndex = nextIndex
+            nextIndex+=columns
+            nextCell = getBoardCell(nextIndex)
+        }
+        return m[currentIndex]
+    }
 
     fun getFreeBoardCell(index:Int):BoardCell?{
         var col = index
@@ -64,7 +92,18 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return null
     }
 
-    fun validRowCol(row: Int, col: Int): Boolean {
+    private fun getBoardCell(index:Int):BoardCell?{
+        if(validIndex(index)){
+            return m[index]
+        }
+        return null
+    }
+
+    private fun validIndex(index:Int):Boolean{
+        return index >= 0 && index < size
+    }
+
+    private fun validRowCol(row: Int, col: Int): Boolean {
         return row >= 0 && row < rows && col >= 0 && col < columns
     }
 
@@ -76,15 +115,15 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         m[getIndex(row, col)] = value
     }
 
-    fun getIndex(row: Int, col: Int): Int {
+    private fun getIndex(row: Int, col: Int): Int {
         return row * columns + col
     }
 
-    fun getColFromIndex(index: Int): Int {
+    private fun getColFromIndex(index: Int): Int {
         return index % columns
     }
 
-    fun getRowFromIndex(index: Int): Int {
+    private fun getRowFromIndex(index: Int): Int {
         return index / columns
     }
 }

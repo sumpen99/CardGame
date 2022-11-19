@@ -10,6 +10,14 @@ fun getScreenHeight() : Int{
     return Resources.getSystem().displayMetrics.heightPixels
 }
 
+fun getFirstXOffset():Int{
+    return 10
+}
+
+fun getFirstYOffset():Int{
+    return 20
+}
+
 fun getOffsetXBetweenCards():Int{
     return 20
 }

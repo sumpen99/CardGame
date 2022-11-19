@@ -1,11 +1,13 @@
 package com.example.cardgame.struct
 
+import com.example.cardgame.enums.PlayingCard
+
 class BoardCell {
     var x:Float = 0.0f
     var y:Float = 0.0f
     var occupied:Boolean = false
-    var key:Int = -1
     var index:Int = -1
+    lateinit var playingCard: PlayingCard
 
     fun setPosition(posX:Float,posY:Float,idx:Int){
         x=posX
@@ -17,12 +19,12 @@ class BoardCell {
         occupied = true
     }
 
-    fun setKeyValue(k:Int){
-        key = k
+    fun setKeyValue(cardValue:PlayingCard){
+        playingCard = cardValue
     }
 
     fun resetCell(){
-        key = -1
+        playingCard = PlayingCard.JOKER
         index = -1
         occupied = false
         x = 0.0f
@@ -30,7 +32,7 @@ class BoardCell {
     }
 
     fun makeCellFree(){
-        key = -1
+        playingCard = PlayingCard.JOKER
         occupied = false
     }
 }

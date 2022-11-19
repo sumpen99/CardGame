@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import com.example.cardgame.enums.PlayingCard
 import com.example.cardgame.methods.getCardFromPath
 import com.example.cardgame.methods.getPlayingCard
-import com.example.cardgame.methods.printToTerminal
 import com.example.cardgame.struct.BoardCell
 
 // resource touch event
@@ -24,22 +23,15 @@ class CardView(context: Context,
                val callbackTouch:(CardView)->Boolean) : View(context, attrs){
     lateinit var bitmap : Bitmap
     lateinit var rect : Rect
-    lateinit var playingCard:PlayingCard
     var lastX:Float = 0.0f
     var lastY:Float = 0.0f
     var lastZ:Float = -1.0f
     private val CLICK_RATIO = 150
     private var leftLastClick: Long = 0
     init{
-        setPlayingCard()
         setBitMap()
         setDimensions()
         setBoardCell()
-    }
-
-    private fun setPlayingCard(){
-        playingCard = getCardFromPath(cardPath)
-        //printToTerminal("${playingCard.cardFamily} ${playingCard.value}")
     }
 
     private fun setBitMap(){
@@ -50,13 +42,11 @@ class CardView(context: Context,
 
     private fun setBoardCell(){
         boardCell.setOccupied()
-        //boardCell.setKeyValue()
+        boardCell.setKeyValue(getCardFromPath(cardPath))
     }
 
     private fun setDimensions(){
         layoutParams = ViewGroup.LayoutParams(bitmap.width,bitmap.height)
-        //x = (getScreenWidth()/2).toFloat() - bitmap.width/2
-        //y = (getScreenHeight()/2).toFloat() - bitmap.height/2
         x = boardCell.x
         y = boardCell.y
 
