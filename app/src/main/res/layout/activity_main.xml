@@ -10,26 +10,29 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cardViewLayout"
-        android:layout_width="391dp"
-        android:layout_height="590dp"
+        android:layout_width="394dp"
+        android:layout_height="545dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/mainBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0">
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/mainBtn"
-        android:layout_width="213dp"
-        android:layout_height="70dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="16dp"
+        android:background="@null"
+        android:src="@drawable/cards150"
         android:text="@string/main_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.565"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewLayout"
-        app:layout_constraintVertical_bias="0.901" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
