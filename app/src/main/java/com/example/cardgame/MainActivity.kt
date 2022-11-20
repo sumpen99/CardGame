@@ -1,10 +1,8 @@
 package com.example.cardgame
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
-import android.view.View.OnTouchListener
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.children
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
@@ -42,27 +40,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun setEventListener(){
-        val imgBtn = binding.mainBtn
-        /*txtBtn.setOnClickListener(){
-            addNewView(getCardsToDraw())
-        }*/
-
-        imgBtn.setOnTouchListener(object:OnTouchListener{
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        imgBtn.imageAlpha = 127
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        imgBtn.imageAlpha=255
-                        addNewView(getCardsToDraw())
-                    }
-                }
-                return true
-            }
-        })
+        val dealCardBtn = binding.dealCardBtn
+        val newGameBtn = binding.newGameBtn
+        val reverseBtn = binding.reverseBtn
+        val settingsBtn = binding.settingsBtn
+        setDealCardButton(dealCardBtn,::addNewView)
+        setNewGameButton(newGameBtn,::startNewGame)
     }
 
     private fun addNewView(cardsToAdd:Int){
@@ -79,21 +63,55 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun startNewGame(){
+        cardsDrawn = 0
+        gameBoard.resetBoard()
+        deckOfCards.resetDeck()
+        clearCardViewsFromLayout()
+        addNewView(getCardsToDraw())
+    }
+
+    /*
+    * Needs several loops to remove all children
+    * */
+    private fun clearCardViewsFromLayout(){
+        while(binding.cardViewLayout.childCount>1){
+            var i = 1
+            val childCount = binding.cardViewLayout.childCount
+            while(i<childCount){
+                binding.cardViewLayout.removeView(binding.cardViewLayout.getChildAt(i))
+                i++
+            }
+            if(childCount==1){break}
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+
+    //    ############################ CALLBACKS ############################
+
     /**
-     * CALLBACK TO CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
+     * CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
+     *
      * */
     private fun cardViewRePosition(cardView: CardImageView):BoardCell?{
         return gameBoard.findClosestPoint(cardView.x)
     }
 
     /**
-     * CALLBACK TO CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
+     * CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
+     *
      * */
     private fun cardViewIsFree(cardView: CardImageView):Boolean{
         return gameBoard.validTouch(cardView.boardCell.index)
     }
     /**
-     * CALLBACK TO REMOVE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
+     * REMOVE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
+     *
      * */
     private fun removeCardView(cardView: CardImageView){
         if(gameBoard.validRemove(cardView.boardCell)){
@@ -102,8 +120,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
 }

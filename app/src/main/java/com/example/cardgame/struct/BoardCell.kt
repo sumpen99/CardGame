@@ -1,5 +1,4 @@
 package com.example.cardgame.struct
-
 import com.example.cardgame.enums.PlayingCard
 
 class BoardCell {
@@ -21,14 +20,6 @@ class BoardCell {
 
     fun setKeyValue(cardValue:PlayingCard){
         playingCard = cardValue
-    }
-
-    fun resetCell(){
-        playingCard = PlayingCard.JOKER
-        index = -1
-        occupied = false
-        x = 0.0f
-        y = 0.0f
     }
 
     fun makeCellFree(){

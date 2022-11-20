@@ -99,6 +99,10 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return m[currentIndex]
     }
 
+    fun resetBoard(){
+        for(cell in m.iterator()){ cell.makeCellFree()}
+    }
+
     fun getFreeBoardCell(index:Int):BoardCell?{
         var col = index
         while(col<size){
