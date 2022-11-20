@@ -42,11 +42,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setEventListener(){
         val dealCardBtn = binding.dealCardBtn
-        //val newGameBtn = binding.newGameBtn
-        //val reverseBtn = binding.reverseBtn
-        //val settingsBtn = binding.settingsBtn
+        val newGameBtn = binding.newGameBtn
+        val reverseBtn = binding.reverseBtn
         setDealCardButton(dealCardBtn,::addNewView)
-        //setNewGameButton(newGameBtn,::startNewGame)
+        setNewGameButton(newGameBtn,::startNewGame)
     }
 
     private fun addNewView(cardsToAdd:Int){
