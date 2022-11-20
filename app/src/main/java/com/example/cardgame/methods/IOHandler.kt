@@ -1,5 +1,4 @@
 package com.example.cardgame.methods
-
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

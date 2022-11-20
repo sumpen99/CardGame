@@ -8,8 +8,9 @@ import android.view.View.OnTouchListener
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
+import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.DeckOfCards
-import com.example.cardgame.views.CardView
+import com.example.cardgame.views.CardImageView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards : DeckOfCards
@@ -69,9 +70,9 @@ class MainActivity : AppCompatActivity() {
         var i = 0
         while(i<cardsToAdd){
             val boardCell = gameBoard.getFreeBoardCell(i)
-            assert(boardCell!=null) // if null we done something terrible wrong
+            //assert(boardCell!=null) { "Ooops"}
             binding.cardViewLayout.addView(
-                CardView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::cardViewIsFree),
+                CardImageView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::cardViewIsFree,::cardViewRePosition),
                 binding.cardViewLayout.childCount)
             i++
             cardsDrawn++
@@ -79,15 +80,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * CALLBACK TO CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
+     * */
+    private fun cardViewRePosition(cardView: CardImageView):BoardCell?{
+        return gameBoard.findClosestPoint(cardView.x)
+    }
+
+    /**
      * CALLBACK TO CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
      * */
-    private fun cardViewIsFree(cardView: CardView):Boolean{
+    private fun cardViewIsFree(cardView: CardImageView):Boolean{
         return gameBoard.validTouch(cardView.boardCell.index)
     }
-  /**
+    /**
      * CALLBACK TO REMOVE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
      * */
-    private fun removeCardView(cardView: CardView){
+    private fun removeCardView(cardView: CardImageView){
         if(gameBoard.validRemove(cardView.boardCell)){
             cardView.boardCell.makeCellFree()
             binding.cardViewLayout.removeView(cardView)

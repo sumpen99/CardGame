@@ -181,7 +181,6 @@ class BinarySearchTree {
         else{
             insertNewNode(root, key)
             if(!isBalanced()){
-                printToTerminal("Not Balanced")
                 balanceTree()
             }
         }

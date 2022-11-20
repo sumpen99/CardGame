@@ -1,42 +1,51 @@
 package com.example.cardgame.views
-/*
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
 import com.example.cardgame.methods.getCardFromPath
 import com.example.cardgame.methods.getPlayingCard
+import com.example.cardgame.methods.printToTerminal
 import com.example.cardgame.struct.BoardCell
 
-class CardView(context: Context,
+class CardImageView(context: Context,
                attrs: AttributeSet?=null,
                private var cardPath:String,
                var boardCell:BoardCell,
-               val callbackDestroy:(CardView)->Unit,
-               val callbackTouch:(CardView)->Boolean,
-               val callbackRePosition:(CardView)->Boolean) : View(context, attrs){
-    lateinit var bitmap : Bitmap
-    lateinit var rect : Rect
-    var lastX:Float = 0.0f
-    var lastY:Float = 0.0f
-    var lastZ:Float = -1.0f
+               val callbackDestroy:(CardImageView)->Unit,
+               val callbackTouch:(CardImageView)->Boolean,
+               val callbackRePosition:(CardImageView)->BoardCell?) : AppCompatImageView(context, attrs){
+    private var lastX:Float = 0.0f
+    private var lastY:Float = 0.0f
+    private var lastZ:Float = -1.0f
+    private var bitmapWidth:Int = 0
+    private var bitmapHeight:Int = 0
+    private var onMove:Boolean = false
     private val CLICK_RATIO = 150
     private var leftLastClick: Long = 0
     init{
         setBitMap()
-        setDimensions()
+        setDimension()
+        setPosition()
         setBoardCell()
 
     }
 
     private fun setBitMap(){
-        bitmap = getPlayingCard(context,"cards/${cardPath}")
-        //bitmap = Bitmap.createBitmap(spriteWidth,spriteHeight,Bitmap.Config.ARGB_8888)
-        rect = Rect(0,0,bitmap.width,bitmap.height)
+        val bitmap = getPlayingCard(context,"cards/${cardPath}")
+        bitmapWidth = bitmap.width
+        bitmapHeight = bitmap.height
+        setImageBitmap(bitmap)
+    }
+
+    private fun setDimension(){
+        layoutParams = ViewGroup.LayoutParams(bitmapWidth,bitmapHeight)
+    }
+
+    private fun setPosition(){
+        x = boardCell.x
+        y = boardCell.y
     }
 
     private fun setBoardCell(){
@@ -44,15 +53,8 @@ class CardView(context: Context,
         boardCell.setKeyValue(getCardFromPath(cardPath))
     }
 
-    private fun setDimensions(){
-        layoutParams = ViewGroup.LayoutParams(bitmap.width,bitmap.height)
-        x = boardCell.x
-        y = boardCell.y
-
-    }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        //if(callbackTouch(this)){
+        if(callbackTouch(this)){
             //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
             val pointerIndex = event.actionIndex
             val pointerId = event.getPointerId(pointerIndex)
@@ -62,7 +64,6 @@ class CardView(context: Context,
             when(maskedAction) {
                 MotionEvent.ACTION_DOWN -> {
                     if(isDoubleTap()){
-                        //printToTerminal("DoubleTap")
                         removeSelfFromParent()
                     }
                     else{
@@ -70,8 +71,8 @@ class CardView(context: Context,
                         lastY = event.rawY
                     }
                     //printToTerminal("$z")
-                    //storeZ()
-                    //putViewOnTop()
+                    storeZ()
+                    putViewOnTop()
                     //printToTerminal("TouchDown")
                 }
                 MotionEvent.ACTION_POINTER_DOWN -> {
@@ -79,6 +80,7 @@ class CardView(context: Context,
 
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    setBits()
                     val mx = event.rawX - lastX
                     val my = event.rawY - lastY
                     x+=mx
@@ -90,7 +92,8 @@ class CardView(context: Context,
                 MotionEvent.ACTION_UP -> {
                     setDoubleTapTimer()
                     resetPosition()
-                    //resetZ()
+                    clearBits()
+                    resetZ()
                     //printToTerminal("TouchUp")
                 }
                 MotionEvent.ACTION_POINTER_UP -> {
@@ -101,12 +104,12 @@ class CardView(context: Context,
                 }
             }
             //invalidate()
-        //}
+        }
         return true
     }
 
     private fun removeSelfFromParent(){
-        //callbackDestroy(this)
+        callbackDestroy(this)
     }
 
     private fun isDoubleTap():Boolean{
@@ -129,22 +132,26 @@ class CardView(context: Context,
         z = lastZ
     }
 
+    private fun setBits(){
+        onMove = true
+    }
+
+    private fun clearBits(){
+        onMove = false
+    }
+
     private fun resetPosition(){
-        x = boardCell.x
-        y = boardCell.y
-    }
-
-    fun reDraw(){
-        //printToTerminal("ReDrawCanvas")
-        invalidate()
-    }
-
-    override fun onDraw(canvas: Canvas){
-        super.onDraw(canvas)
-        canvas.apply {
-            drawBitmap(bitmap,null,rect,null)
+        if(onMove){
+            val newCell = callbackRePosition(this)
+            if(newCell!=null){
+                boardCell.makeCellFree()
+                boardCell = newCell
+                setBoardCell()
+            }
+            x = boardCell.x
+            y = boardCell.y
         }
 
     }
+
 }
-*/

@@ -3,6 +3,7 @@ import com.example.cardgame.enums.Direction
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.PassedCheck
+import com.example.cardgame.struct.RangeCheck
 
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
@@ -31,6 +32,23 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             m[i].setPosition(x,y,i)
             i++
         }
+    }
+
+    fun findClosestPoint(currentX:Float):BoardCell?{
+        val rangeCheck = RangeCheck()
+        rangeCheck.dist = Math.abs(currentX-m[0].x)
+        rangeCheck.index = 0
+        var i = 1
+        while(i<columns){
+            val dist = Math.abs(currentX-m[i].x)
+            if(dist < rangeCheck.dist){
+                rangeCheck.dist = dist
+                rangeCheck.index = i
+            }
+            i++
+        }
+        if(!m[rangeCheck.index].occupied){return m[rangeCheck.index]}
+        return null
     }
 
     fun validTouch(index:Int):Boolean{
