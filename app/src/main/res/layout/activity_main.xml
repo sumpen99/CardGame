@@ -23,7 +23,7 @@
             android:layout_width="287dp"
             android:layout_height="180dp"
             android:background="@null"
-            android:src="@drawable/acesup"
+            android:src="@drawable/acesupwhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,68 +36,12 @@
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardViewLayout"
         app:layout_constraintVertical_bias="0.95">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bottomTxtButtonLayout"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/dealCardBtn"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/bottomButtonLayout"
-            app:layout_constraintVertical_bias="1.0">
-
-            <ImageButton
-                android:id="@+id/reverseBtn"
-                android:layout_width="130dp"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/arrowback"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.019" />
-
-            <ImageButton
-                android:id="@+id/settingsBtn"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/settings"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reverseBtn"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <ImageButton
-                android:id="@+id/newGameBtn"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="1dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/newgame"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settingsBtn"
-                app:layout_constraintVertical_bias="1.0" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
             android:id="@+id/dealCardBtn"
@@ -107,10 +51,19 @@
             android:src="@drawable/cards150"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.579"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
