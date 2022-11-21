@@ -1,13 +1,13 @@
 package com.example.cardgame.board
 import com.example.cardgame.enums.Direction
 import com.example.cardgame.methods.*
-import com.example.cardgame.struct.BoardCell
-import com.example.cardgame.struct.PassedCheck
-import com.example.cardgame.struct.RangeCheck
+import com.example.cardgame.struct.*
+import com.example.cardgame.views.CardImageView
 
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
     private var m: Array<BoardCell>
+    private lateinit var reverseStack:ReverseStack
     init{
         size = rows*columns
         m = Array(size){ BoardCell() }
@@ -34,7 +34,8 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
     }
 
-    fun findClosestPoint(currentX:Float):BoardCell?{
+    fun findClosestPoint(cardView: CardImageView):BoardCell?{
+        val currentX:Float = cardView.x
         val rangeCheck = RangeCheck()
         rangeCheck.dist = Math.abs(currentX-m[0].x)
         rangeCheck.index = 0
@@ -47,8 +48,23 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             }
             i++
         }
-        if(!m[rangeCheck.index].occupied){return m[rangeCheck.index]}
+        if(!m[rangeCheck.index].occupied){
+            pushMoveToStack(cardView)
+            return m[rangeCheck.index]
+        }
         return null
+    }
+
+    private fun pushMoveToStack(cardView: CardImageView){
+        reverseStack.push(ReverseOperation(cardView,cardView.boardCell))
+    }
+
+    fun popMoveFromStack(){
+        reverseStack.pop()
+    }
+
+    fun clearStack(){
+        reverseStack = ReverseStack()
     }
 
     fun validTouch(index:Int):Boolean{
@@ -100,6 +116,7 @@ class GameBoard(private var rows:Int,private var columns:Int) {
     }
 
     fun resetBoard(){
+        clearStack()
         for(cell in m.iterator()){ cell.makeCellFree()}
     }
 
@@ -112,6 +129,10 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             col+=columns
         }
         return null
+    }
+
+    fun printReverseStack(){
+        reverseStack.printStack()
     }
 
     private fun getBoardCell(index:Int):BoardCell?{

@@ -42,14 +42,15 @@ class MainActivity : AppCompatActivity() {
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
-        newGameBtn.setCallback(null,::startNewGame)
-        reverseBtn.setCallback(null,::startNewGame)
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
+        newGameBtn.setCallback(null,::startNewGame)
+        reverseBtn.setCallback(null,::reverseLastMove)
     }
 
     private fun addNewView(parameter:Any?){
         val cardsToAdd:Int = parameter as Int
         if(cardsDrawn > getCardsInADeck()-cardsToAdd)return
+        gameBoard.clearStack()
         var i = 0
         while(i<cardsToAdd){
             val boardCell = gameBoard.getFreeBoardCell(i)
@@ -67,6 +68,10 @@ class MainActivity : AppCompatActivity() {
         deckOfCards.resetDeck()
         clearCardViewsFromLayout()
         addNewView(getCardsToDraw())
+    }
+
+    private fun reverseLastMove(parameter:Any?){
+        gameBoard.popMoveFromStack()
     }
 
     /*
@@ -97,7 +102,7 @@ class MainActivity : AppCompatActivity() {
      *
      * */
     private fun cardViewRePosition(cardView: CardImageView):BoardCell?{
-        return gameBoard.findClosestPoint(cardView.x)
+        return gameBoard.findClosestPoint(cardView)
     }
 
     /**

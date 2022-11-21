@@ -144,14 +144,25 @@ class CardImageView(context: Context,
         if(onMove){
             val newCell = callbackRePosition(this)
             if(newCell!=null){
-                boardCell.makeCellFree()
-                boardCell = newCell
-                setBoardCell()
+                setNewPosition(newCell)
+                //boardCell.makeCellFree()
+                //boardCell = newCell
+                //setBoardCell()
             }
             x = boardCell.x
             y = boardCell.y
         }
 
+    }
+
+    fun setNewPosition(newCell:BoardCell){
+        printToTerminal("CurrentCell X:${boardCell.x} Y:${boardCell.y}")
+        printToTerminal("NewCell X:${newCell.x} Y:${newCell.y}")
+        boardCell.makeCellFree()
+        boardCell = newCell
+        setBoardCell()
+        x = boardCell.x
+        y = boardCell.y
     }
 
 }
