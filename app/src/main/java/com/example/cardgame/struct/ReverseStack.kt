@@ -1,5 +1,4 @@
 package com.example.cardgame.struct
-
 import com.example.cardgame.methods.printToTerminal
 
 class ReverseStack {
@@ -17,7 +16,6 @@ class ReverseStack {
         if(root!=null){
             val temp:ReverseOperation = root!!
             temp.reverseMove()
-            //temp.cardView.setNewPosition(temp.boardCellOrg)
             root = temp.next
         }
     }

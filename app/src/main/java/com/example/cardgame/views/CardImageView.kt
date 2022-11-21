@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import com.example.cardgame.methods.getCardFromPath
 import com.example.cardgame.methods.getPlayingCard
-import com.example.cardgame.methods.printToTerminal
 import com.example.cardgame.struct.BoardCell
 
 class CardImageView(context: Context,
@@ -145,9 +144,7 @@ class CardImageView(context: Context,
             val newCell = callbackRePosition(this)
             if(newCell!=null){
                 setNewPosition(newCell)
-                //boardCell.makeCellFree()
-                //boardCell = newCell
-                //setBoardCell()
+                return
             }
             x = boardCell.x
             y = boardCell.y
@@ -156,8 +153,6 @@ class CardImageView(context: Context,
     }
 
     fun setNewPosition(newCell:BoardCell){
-        printToTerminal("CurrentCell X:${boardCell.x} Y:${boardCell.y}")
-        printToTerminal("NewCell X:${newCell.x} Y:${newCell.y}")
         boardCell.makeCellFree()
         boardCell = newCell
         setBoardCell()

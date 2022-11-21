@@ -1,12 +1,15 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.DeckOfCards
 import com.example.cardgame.views.CardImageView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards : DeckOfCards
@@ -14,6 +17,9 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
+    private val rulesFragment = RulesFragment()
+    private val settingsFragment = SettingsFragment()
+    private var currentFragment:Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +48,19 @@ class MainActivity : AppCompatActivity() {
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
+        val bottomNavMenu: BottomNavigationView = binding.bottomNavigationView
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
         newGameBtn.setCallback(null,::startNewGame)
         reverseBtn.setCallback(null,::reverseLastMove)
+        bottomNavMenu.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.navHome->removeCurrentFragment()
+                R.id.navRules->navigateFragment(rulesFragment)
+                R.id.navSettings->navigateFragment(settingsFragment)
+            }
+            true
+        }
+
     }
 
     private fun addNewView(parameter:Any?){
@@ -59,6 +75,21 @@ class MainActivity : AppCompatActivity() {
                 binding.cardViewLayout.childCount)
             i++
             cardsDrawn++
+        }
+    }
+
+    private fun navigateFragment(fragment:Fragment){
+        //if(currentFragment==fragment){removeCurrentFragment();return}
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.mainLayout,fragment).commit()
+            currentFragment = fragment
+        }
+    }
+
+    private fun removeCurrentFragment(){
+        if(currentFragment!=null){
+            supportFragmentManager.beginTransaction().remove(currentFragment!!).commit()
+            currentFragment = null
         }
     }
 
