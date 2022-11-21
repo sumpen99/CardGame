@@ -1,8 +1,6 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.view.children
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
@@ -44,16 +42,17 @@ class MainActivity : AppCompatActivity() {
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
-        setDealCardButton(dealCardBtn,::addNewView)
-        setNewGameButton(newGameBtn,::startNewGame)
+        newGameBtn.setCallback(null,::startNewGame)
+        reverseBtn.setCallback(null,::startNewGame)
+        dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
     }
 
-    private fun addNewView(cardsToAdd:Int){
+    private fun addNewView(parameter:Any?){
+        val cardsToAdd:Int = parameter as Int
         if(cardsDrawn > getCardsInADeck()-cardsToAdd)return
         var i = 0
         while(i<cardsToAdd){
             val boardCell = gameBoard.getFreeBoardCell(i)
-            //assert(boardCell!=null) { "Ooops"}
             binding.cardViewLayout.addView(
                 CardImageView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::cardViewIsFree,::cardViewRePosition),
                 binding.cardViewLayout.childCount)
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startNewGame(){
+    private fun startNewGame(parameter:Any?){
         cardsDrawn = 0
         gameBoard.resetBoard()
         deckOfCards.resetDeck()

@@ -43,20 +43,20 @@
         app:layout_constraintTop_toBottomOf="@+id/cardViewLayout"
         app:layout_constraintVertical_bias="0.95">
 
-        <ImageButton
+        <com.example.cardgame.widget.CustomImageButton
             android:id="@+id/newGameBtn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@null"
             android:scaleType="fitCenter"
-            android:src="@drawable/newgame"
+            android:src="@drawable/ic_new_game_foreground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/dealCardBtn"
             app:layout_constraintHorizontal_bias="0.62"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
+        <com.example.cardgame.widget.CustomImageButton
             android:id="@+id/dealCardBtn"
             android:layout_width="150dp"
             android:layout_height="150dp"
@@ -70,12 +70,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
-        <ImageButton
+        <com.example.cardgame.widget.CustomImageButton
             android:id="@+id/reverseBtn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@null"
-            android:src="@drawable/newgame"
+            android:src="@drawable/ic_reverse_card_foreground"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
