@@ -7,8 +7,8 @@ import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.DeckOfCards
+import com.example.cardgame.struct.MessageToUser
 import com.example.cardgame.views.CardImageView
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startNewGame(parameter:Any?){
+        MessageToUser(this,null,"Testing")
         cardsDrawn = 0
         gameBoard.resetBoard()
         deckOfCards.resetDeck()
