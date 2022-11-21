@@ -10,7 +10,7 @@ class MessageToUser(val context:Context,val view: View?,val message:String){
 
     private fun showMessage(){
         val positiveButtonClick = {dialog:DialogInterface,which:Int->
-            Toast.makeText(context,"OK Gotcha!",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Gotcha!",Toast.LENGTH_SHORT).show()
         }
         val negativeButtonClick = {dialog:DialogInterface,which:Int->
             Toast.makeText(context,"That's Alright!",Toast.LENGTH_SHORT).show()

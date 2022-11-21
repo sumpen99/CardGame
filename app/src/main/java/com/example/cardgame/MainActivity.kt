@@ -11,6 +11,17 @@ import com.example.cardgame.struct.MessageToUser
 import com.example.cardgame.views.CardImageView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+
+/*
+* TODO EXTEND REVERSE TO SUPPORT REMOVED CARD AS WELL AS MOVED CARDS (STORE BITMAPS AFTER DEL?)
+* TODO MAKE NEW BUTTONS -> NEW GAME -> REVERSE MOVE
+* TODO MAKE RULES PAGE
+* TODO MAKE UP SOME SETTINGS -> ADD WILD CARD (JOKER?)
+* TODO MAKE SOME KIND OF MESSAGE AFTER WIN/LOSS
+* */
+
+
+
 class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
