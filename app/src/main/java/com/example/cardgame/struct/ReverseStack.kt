@@ -16,7 +16,8 @@ class ReverseStack {
     fun pop(){
         if(root!=null){
             val temp:ReverseOperation = root!!
-            temp.cardView.setNewPosition(temp.boardCellOrg)
+            temp.reverseMove()
+            //temp.cardView.setNewPosition(temp.boardCellOrg)
             root = temp.next
         }
     }

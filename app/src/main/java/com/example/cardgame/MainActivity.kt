@@ -118,6 +118,7 @@ class MainActivity : AppCompatActivity() {
      * */
     private fun removeCardView(cardView: CardImageView){
         if(gameBoard.validRemove(cardView.boardCell)){
+            gameBoard.clearStack()
             cardView.boardCell.makeCellFree()
             binding.cardViewLayout.removeView(cardView)
         }
