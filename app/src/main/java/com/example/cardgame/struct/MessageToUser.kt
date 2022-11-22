@@ -3,7 +3,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
-import android.widget.Toast
 
 class MessageToUser(val context:Context,val view: View?,val args:Any?,val callback:(args:Any?)->Unit,val message:String){
     init{ showMessage()}
@@ -32,6 +31,6 @@ class MessageToUser(val context:Context,val view: View?,val args:Any?,val callba
         builder.setPositiveButton("YES",DialogInterface.OnClickListener(positiveButtonClick))
         builder.setNegativeButton("NO",DialogInterface.OnClickListener(negativeButtonClick))
         //builder.setNeutralButton("Maybe",DialogInterface.OnClickListener(neutralButtonClick))
-        builder.show()
+        builder.show().setCanceledOnTouchOutside(false)
     }
 }

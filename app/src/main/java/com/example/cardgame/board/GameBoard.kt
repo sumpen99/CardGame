@@ -1,5 +1,6 @@
 package com.example.cardgame.board
 import com.example.cardgame.enums.Direction
+import com.example.cardgame.enums.StackOperation
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.*
 import com.example.cardgame.views.CardImageView
@@ -7,7 +8,7 @@ import com.example.cardgame.views.CardImageView
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
     private var m: Array<BoardCell>
-    private lateinit var reverseStack:ReverseStack
+    private var reverseStack:ReverseStack = ReverseStack()
     init{
         size = rows*columns
         m = Array(size){ BoardCell() }
@@ -49,14 +50,28 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             i++
         }
         if(!m[rangeCheck.index].occupied){
-            pushMoveToStack(cardView)
+            pushMoveToStack(cardView,StackOperation.MOVE_CARD)
             return m[rangeCheck.index]
         }
         return null
     }
 
-    private fun pushMoveToStack(cardView: CardImageView){
-        reverseStack.push(ReverseOperation(cardView,cardView.boardCell))
+    fun validRemove(cardView: CardImageView):Boolean{
+        val cardToTest:BoardCell = cardView.boardCell
+        val row = getRowFromIndex(cardToTest.index)
+        val col = getColFromIndex(cardToTest.index)
+        val cardSum = PassedCheck()
+        searchDirection(row,col-1,Direction.WEST,cardToTest,cardSum)
+        searchDirection(row,col+1,Direction.EAST,cardToTest,cardSum)
+        if(cardSum.num>0){
+            pushMoveToStack(cardView,StackOperation.RETRIVE_CARD)
+            return true
+        }
+        return false
+    }
+
+    private fun pushMoveToStack(cardView: CardImageView,op:StackOperation){
+        reverseStack.push(ReverseOperation(cardView,cardView.boardCell,op))
     }
 
     fun popMoveFromStack(){
@@ -64,7 +79,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
     }
 
     fun clearStack(){
-        reverseStack = ReverseStack()
+        reverseStack.removeHiddenCards()
+        reverseStack.clearStack()
+        //reverseStack = ReverseStack()
     }
 
     fun validTouch(index:Int):Boolean{
@@ -72,15 +89,6 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         val col = getColFromIndex(index)
         if(row == rows-1 ||(validRowCol(row+1,col) && !m[getIndex(row+1,col)].occupied)){return true}
         return false
-    }
-
-    fun validRemove(cardToTest:BoardCell):Boolean{
-        val row = getRowFromIndex(cardToTest.index)
-        val col = getColFromIndex(cardToTest.index)
-        val cardSum = PassedCheck()
-        searchDirection(row,col-1,Direction.WEST,cardToTest,cardSum)
-        searchDirection(row,col+1,Direction.EAST,cardToTest,cardSum)
-        return cardSum.num>0
     }
 
     private fun searchDirection(cellRow:Int,cellCol:Int,dir: Direction,cardToRemove:BoardCell,cardSum:PassedCheck){
@@ -129,10 +137,6 @@ class GameBoard(private var rows:Int,private var columns:Int) {
             col+=columns
         }
         return null
-    }
-
-    fun printReverseStack(){
-        reverseStack.printStack()
     }
 
     private fun getBoardCell(index:Int):BoardCell?{

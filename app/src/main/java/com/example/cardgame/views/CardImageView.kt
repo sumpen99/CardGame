@@ -9,18 +9,20 @@ import com.example.cardgame.methods.getPlayingCard
 import com.example.cardgame.struct.BoardCell
 
 class CardImageView(context: Context,
-               attrs: AttributeSet?=null,
-               private var cardPath:String,
-               var boardCell:BoardCell,
-               val callbackDestroy:(CardImageView)->Unit,
-               val callbackTouch:(CardImageView)->Boolean,
-               val callbackRePosition:(CardImageView)->BoardCell?) : AppCompatImageView(context, attrs){
+                    attrs: AttributeSet?=null,
+                    private var cardPath:String,
+                    var boardCell:BoardCell,
+                    val callbackDestroy:(CardImageView)->Unit,
+                    val callbackHide:(CardImageView)->Boolean,
+                    val callbackTouch:(CardImageView)->Boolean,
+                    val callbackRePosition:(CardImageView)->BoardCell?) : AppCompatImageView(context, attrs){
     private var lastX:Float = 0.0f
     private var lastY:Float = 0.0f
     private var lastZ:Float = -1.0f
     private var bitmapWidth:Int = 0
     private var bitmapHeight:Int = 0
     private var onMove:Boolean = false
+    private var hiddenCard:Boolean = false
     private val CLICK_RATIO = 150
     private var leftLastClick: Long = 0
     init{
@@ -53,6 +55,7 @@ class CardImageView(context: Context,
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if(hiddenCard){return false}
         if(callbackTouch(this)){
             //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
             val pointerIndex = event.actionIndex
@@ -63,7 +66,7 @@ class CardImageView(context: Context,
             when(maskedAction) {
                 MotionEvent.ACTION_DOWN -> {
                     if(isDoubleTap()){
-                        removeSelfFromParent()
+                        hideSelfFromParent()
                     }
                     else{
                         lastX = event.rawX
@@ -107,10 +110,6 @@ class CardImageView(context: Context,
         return true
     }
 
-    private fun removeSelfFromParent(){
-        callbackDestroy(this)
-    }
-
     private fun isDoubleTap():Boolean{
         return System.currentTimeMillis()-leftLastClick<=CLICK_RATIO
     }
@@ -150,6 +149,29 @@ class CardImageView(context: Context,
             y = boardCell.y
         }
 
+    }
+
+    private fun hideSelfFromParent(){
+        if(callbackHide(this)){
+            hideCardTemporary()
+        }
+    }
+
+    fun removeSelfFromParent(){
+        callbackDestroy(this)
+    }
+
+    private fun hideCardTemporary(){
+        hiddenCard = true
+        imageAlpha = 0
+        boardCell.makeCellFree()
+    }
+
+    fun showCard(){
+        hiddenCard = false
+        imageAlpha = 255
+        z = lastZ
+        setBoardCell()
     }
 
     fun setNewPosition(newCell:BoardCell){

@@ -1,4 +1,5 @@
 package com.example.cardgame.struct
+import com.example.cardgame.enums.StackOperation
 import com.example.cardgame.methods.printToTerminal
 
 class ReverseStack {
@@ -18,6 +19,22 @@ class ReverseStack {
             temp.reverseMove()
             root = temp.next
         }
+    }
+
+    fun removeHiddenCards(){
+        if(root!=null){
+            var t = root
+            while(t!=null){
+                if(t.opCode == StackOperation.RETRIVE_CARD){
+                    t.cardView.removeSelfFromParent()
+                }
+                t = t.next
+            }
+        }
+    }
+
+    fun clearStack(){
+        root = null
     }
 
     fun printStack(){

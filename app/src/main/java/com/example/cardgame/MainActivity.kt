@@ -1,6 +1,7 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
@@ -15,8 +16,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 /*
-* TODO EXTEND REVERSE TO SUPPORT REMOVED CARD AS WELL AS MOVED CARDS (STORE BITMAPS AFTER DEL?)
-* TODO MAKE NEW BUTTONS -> NEW GAME -> REVERSE MOVE
 * TODO MAKE RULES PAGE
 * TODO MAKE UP SOME SETTINGS -> ADD WILD CARD (JOKER?)
 * TODO MAKE SOME KIND OF MESSAGE AFTER WIN/LOSS
@@ -71,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
         newGameBtn.setCallback(null,::startNewGame)
         reverseBtn.setCallback(null,::reverseLastMove)
-        bottomNavMenu.setOnItemSelectedListener {
+        bottomNavMenu.setOnItemSelectedListener {it: MenuItem ->
             when(it.itemId){
                 R.id.navHome->removeCurrentFragment()
                 R.id.navRules->navigateFragment(rulesFragment)
@@ -88,12 +87,12 @@ class MainActivity : AppCompatActivity() {
             informUser("No More Cards To Draw...")
             return
         }
-        gameBoard.clearStack()
+        clearStack()
         var i = 0
         while(i<cardsToAdd){
             val boardCell = gameBoard.getFreeBoardCell(i)
             binding.cardViewLayout.addView(
-                CardImageView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::cardViewIsFree,::cardViewRePosition),
+                CardImageView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::hideCardView,::cardViewIsFree,::cardViewRePosition),
                 binding.cardViewLayout.childCount)
             i++
             cardsDrawn++
@@ -121,6 +120,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun startNewGame(parameter:Any?){
         MessageToUser(this,null,null,::playerStartNewGame,"Star New Game?")
+    }
+
+    private fun clearStack(){
+        gameBoard.clearStack()
     }
 
     private fun reverseLastMove(parameter:Any?){
@@ -151,8 +154,7 @@ class MainActivity : AppCompatActivity() {
     //    ############################ CALLBACKS ############################
 
     /**
-     * START NEW GAME IF USER CLICK YES
-     *
+     *              START NEW GAME IF USER CLICK YES
      * */
     private fun playerStartNewGame(parameter:Any?){
         cardsDrawn = 0
@@ -163,30 +165,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
-     *
+     *              CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
      * */
     private fun cardViewRePosition(cardView: CardImageView):BoardCell?{
         return gameBoard.findClosestPoint(cardView)
     }
 
     /**
-     * CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
-     *
+     *              CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
      * */
     private fun cardViewIsFree(cardView: CardImageView):Boolean{
         return gameBoard.validTouch(cardView.boardCell.index)
     }
+
     /**
-     * REMOVE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
-     *
+     *              HIDE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
      * */
-    private fun removeCardView(cardView: CardImageView){
-        if(gameBoard.validRemove(cardView.boardCell)){
-            gameBoard.clearStack()
-            cardView.boardCell.makeCellFree()
-            binding.cardViewLayout.removeView(cardView)
-        }
+    private fun hideCardView(cardView: CardImageView):Boolean{
+        return gameBoard.validRemove(cardView)
     }
 
+    /**
+     *              REMOVE CARDVIEW FROM GAMEBOARD
+     * */
+    private fun removeCardView(cardView: CardImageView){
+        binding.cardViewLayout.removeView(cardView)
+    }
 }
