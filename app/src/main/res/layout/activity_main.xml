@@ -43,19 +43,45 @@
         app:layout_constraintTop_toBottomOf="@+id/cardViewLayout"
         app:layout_constraintVertical_bias="0.95">
 
-        <com.example.cardgame.widget.CustomImageButton
-            android:id="@+id/newGameBtn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_new_game_foreground"
-            android:tint="@color/white"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomleftLayout"
+            android:layout_width="126dp"
+            android:layout_height="148dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/dealCardBtn"
-            app:layout_constraintHorizontal_bias="0.62"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.example.cardgame.widget.CustomImageButton
+                android:id="@+id/reverseBtn"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/reverse"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/newGameBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.79" />
+
+            <com.example.cardgame.widget.CustomImageButton
+                android:id="@+id/newGameBtn"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/newgame"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.94" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.example.cardgame.widget.CustomImageButton
             android:id="@+id/dealCardBtn"
@@ -71,19 +97,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
-        <com.example.cardgame.widget.CustomImageButton
-            android:id="@+id/reverseBtn"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@null"
-            android:src="@drawable/ic_reverse_card_foreground"
-            android:scaleType="fitCenter"
-            android:tint="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.686"
-            app:layout_constraintStart_toEndOf="@+id/dealCardBtn"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -96,5 +109,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="@drawable/bottom_navigation_selector"
-        app:itemTextColor="@drawable/bottom_navigation_selector"/>
+        app:itemTextColor="@drawable/bottom_navigation_selector"
+        app:labelVisibilityMode="labeled"
+        app:itemHorizontalTranslationEnabled="false"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

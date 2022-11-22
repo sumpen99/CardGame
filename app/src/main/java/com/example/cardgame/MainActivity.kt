@@ -1,6 +1,7 @@
 package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
@@ -8,6 +9,7 @@ import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.DeckOfCards
 import com.example.cardgame.struct.MessageToUser
+import com.example.cardgame.struct.ToastMessage
 import com.example.cardgame.views.CardImageView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -25,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
+    private lateinit var infoToUser:ToastMessage
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
@@ -38,8 +41,13 @@ class MainActivity : AppCompatActivity() {
         loadCards()
         setUpGameBoard()
         setDataBinding()
+        setUpInfoToUser()
         setEventListener()
         addNewView(getCardsToDraw())
+    }
+
+    private fun setUpInfoToUser(){
+        infoToUser = ToastMessage(this)
     }
 
     private fun setUpGameBoard(){
@@ -76,7 +84,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun addNewView(parameter:Any?){
         val cardsToAdd:Int = parameter as Int
-        if(cardsDrawn > getCardsInADeck()-cardsToAdd)return
+        if(cardsDrawn > getCardsInADeck()-cardsToAdd){
+            informUser("No More Cards To Draw...")
+            return
+        }
         gameBoard.clearStack()
         var i = 0
         while(i<cardsToAdd){
@@ -104,13 +115,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun informUser(message:String){
+        infoToUser.showMessage(message,Toast.LENGTH_SHORT)
+    }
+
     private fun startNewGame(parameter:Any?){
-        MessageToUser(this,null,"Testing")
-        cardsDrawn = 0
-        gameBoard.resetBoard()
-        deckOfCards.resetDeck()
-        clearCardViewsFromLayout()
-        addNewView(getCardsToDraw())
+        MessageToUser(this,null,null,::playerStartNewGame,"Star New Game?")
     }
 
     private fun reverseLastMove(parameter:Any?){
@@ -139,6 +149,18 @@ class MainActivity : AppCompatActivity() {
 
 
     //    ############################ CALLBACKS ############################
+
+    /**
+     * START NEW GAME IF USER CLICK YES
+     *
+     * */
+    private fun playerStartNewGame(parameter:Any?){
+        cardsDrawn = 0
+        gameBoard.resetBoard()
+        deckOfCards.resetDeck()
+        clearCardViewsFromLayout()
+        addNewView(getCardsToDraw())
+    }
 
     /**
      * CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
