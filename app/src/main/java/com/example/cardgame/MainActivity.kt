@@ -2,6 +2,7 @@ package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
@@ -11,7 +12,9 @@ import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.DeckOfCards
 import com.example.cardgame.struct.MessageToUser
 import com.example.cardgame.struct.ToastMessage
+import com.example.cardgame.threading.executeNewThread
 import com.example.cardgame.views.CardImageView
+import com.example.cardgame.views.CounterTextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -24,6 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var counterTxt: CounterTextView
     private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
     private lateinit var infoToUser:ToastMessage
@@ -63,10 +67,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setEventListener(){
+        val submitBtn = binding.submitBtn
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
         val bottomNavMenu: BottomNavigationView = binding.bottomNavigationView
+        counterTxt = binding.counterTxtView
+
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
         newGameBtn.setCallback(null,::startNewGame)
         reverseBtn.setCallback(null,::reverseLastMove)
@@ -130,6 +137,10 @@ class MainActivity : AppCompatActivity() {
         gameBoard.popMoveFromStack()
     }
 
+    private fun startClock(){
+        executeNewThread(counterTxt)
+    }
+
     /*
     * Needs several loops to remove all children
     * */
@@ -162,6 +173,7 @@ class MainActivity : AppCompatActivity() {
         deckOfCards.resetDeck()
         clearCardViewsFromLayout()
         addNewView(getCardsToDraw())
+        startClock()
     }
 
     /**
