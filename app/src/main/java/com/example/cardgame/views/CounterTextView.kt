@@ -7,14 +7,18 @@ import com.example.cardgame.interfaces.IThreading
 class CounterTextView(context: Context,attrs: AttributeSet?=null):IThreading,AppCompatTextView(context, attrs){
     private var callbackInProgress:Boolean = false
     private var maxTime:Int=999
+    private var currentTimer:Int = 0
 
     private fun startCounter(){
-        var i = 0
-        while(callbackInProgress && i<=maxTime){
-            text = "$i"
+        while(callbackInProgress && currentTimer<=maxTime){
+            text = "$currentTimer"
             Thread.sleep(1000)
-            i++
+            currentTimer++
         }
+    }
+
+    fun resetClock(){
+        currentTimer = 0
     }
 
     override fun startActivity() {

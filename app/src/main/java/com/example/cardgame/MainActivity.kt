@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setUpInfoToUser()
         setEventListener()
         addNewView(getCardsToDraw())
+        startClock()
     }
 
     private fun setUpInfoToUser(){
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         counterTxt = binding.counterTxtView
 
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
-        newGameBtn.setCallback(null,::startNewGame)
+        newGameBtn.setCallback(null,::askForNewGame)
         reverseBtn.setCallback(null,::reverseLastMove)
         bottomNavMenu.setOnItemSelectedListener {it: MenuItem ->
             when(it.itemId){
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateFragment(fragment:Fragment){
         //if(currentFragment==fragment){removeCurrentFragment();return}
+        stopClock()
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.mainLayout,fragment).commit()
             currentFragment = fragment
@@ -118,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         if(currentFragment!=null){
             supportFragmentManager.beginTransaction().remove(currentFragment!!).commit()
             currentFragment = null
+            startClock()
         }
     }
 
@@ -125,8 +128,9 @@ class MainActivity : AppCompatActivity() {
         infoToUser.showMessage(message,Toast.LENGTH_SHORT)
     }
 
-    private fun startNewGame(parameter:Any?){
-        MessageToUser(this,null,null,::playerStartNewGame,"Star New Game?")
+    private fun askForNewGame(parameter:Any?){
+        stopClock()
+        MessageToUser(this,null,null,::playerStartNewGame,::playerResumeGame,"Star New Game?")
     }
 
     private fun clearStack(){
@@ -139,6 +143,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun startClock(){
         executeNewThread(counterTxt)
+    }
+
+    private fun stopClock(){
+        counterTxt.stopActivity()
     }
 
     /*
@@ -165,12 +173,21 @@ class MainActivity : AppCompatActivity() {
     //    ############################ CALLBACKS ############################
 
     /**
-     *              START NEW GAME IF USER CLICK YES
+     *              RESUME GAME IF USER CLICK YES AND RESTART CLOCK
+     * */
+    private fun playerResumeGame(parameter:Any?){
+        startClock()
+    }
+
+
+    /**
+     *              START NEW GAME IF USER CLICK YES AND RESTART CLOCK
      * */
     private fun playerStartNewGame(parameter:Any?){
         cardsDrawn = 0
         gameBoard.resetBoard()
         deckOfCards.resetDeck()
+        counterTxt.resetClock()
         clearCardViewsFromLayout()
         addNewView(getCardsToDraw())
         startClock()

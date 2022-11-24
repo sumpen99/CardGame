@@ -4,15 +4,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 
-class MessageToUser(val context:Context,val view: View?,val args:Any?,val callback:(args:Any?)->Unit,val message:String){
+class MessageToUser(val context:Context,val view: View?,val args:Any?,val callbackYes:(args:Any?)->Unit,val callbackNo:(args:Any?)->Unit,val message:String){
     init{ showMessage()}
 
     private fun showMessage(){
         val builder:AlertDialog.Builder = AlertDialog.Builder(context)
         val positiveButtonClick = { dialog:DialogInterface,which:Int->
-            callback(args)
+            callbackYes(args)
         }
         val negativeButtonClick = {dialog:DialogInterface,which:Int->
+            callbackNo(args)
             dialog.cancel()
         }
         /*val neutralButtonClick = {dialog:DialogInterface,which:Int->
