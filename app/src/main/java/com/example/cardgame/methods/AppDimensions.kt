@@ -63,3 +63,11 @@ fun getCardsToDraw():Int{
 fun getDecksToUse():Int{
     return 1
 }
+
+fun getAceValue():Int{
+    return 14
+}
+
+fun getWinningCount():Int{
+    return 4
+}

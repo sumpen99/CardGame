@@ -3,8 +3,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
+import com.example.cardgame.methods.templateFunction
 
 class MessageToUser(val context:Context,val view: View?,val args:Any?,val callbackYes:(args:Any?)->Unit,val callbackNo:(args:Any?)->Unit,val message:String){
+    constructor(context:Context,view: View?,args:Any?,callbackYes:(args:Any?)->Unit,message:String):this(context,view,args,callbackYes,::templateFunction,message)
+
     init{ showMessage()}
 
     private fun showMessage(){
@@ -14,7 +17,7 @@ class MessageToUser(val context:Context,val view: View?,val args:Any?,val callba
         }
         val negativeButtonClick = {dialog:DialogInterface,which:Int->
             callbackNo(args)
-            dialog.cancel()
+            //dialog.cancel()
         }
         /*val neutralButtonClick = {dialog:DialogInterface,which:Int->
             Toast.makeText(context,"Maybe",Toast.LENGTH_SHORT).show()

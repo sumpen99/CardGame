@@ -13,7 +13,7 @@ class CardImageView(context: Context,
                     private var cardPath:String,
                     var boardCell:BoardCell,
                     val callbackDestroy:(CardImageView)->Unit,
-                    val callbackHide:(CardImageView)->Boolean,
+                    val callbackHide:(CardImageView)->Unit,
                     val callbackTouch:(CardImageView)->Boolean,
                     val callbackRePosition:(CardImageView)->BoardCell?) : AppCompatImageView(context, attrs){
     private var lastX:Float = 0.0f
@@ -152,16 +152,14 @@ class CardImageView(context: Context,
     }
 
     private fun hideSelfFromParent(){
-        if(callbackHide(this)){
-            hideCardTemporary()
-        }
+        callbackHide(this)
     }
 
     fun removeSelfFromParent(){
         callbackDestroy(this)
     }
 
-    private fun hideCardTemporary(){
+    fun hideCardTemporary(){
         hiddenCard = true
         imageAlpha = 0
         boardCell.makeCellFree()

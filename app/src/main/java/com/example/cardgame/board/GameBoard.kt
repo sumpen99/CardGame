@@ -9,6 +9,7 @@ class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
     private var m: Array<BoardCell>
     private var reverseStack:ReverseStack = ReverseStack()
+    private var allCardsDrawn:Boolean = false
     init{
         size = rows*columns
         m = Array(size){ BoardCell() }
@@ -111,6 +112,19 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return false
     }
 
+    fun detectWinner():Boolean{
+        if(!getAllCardsDrawn()){return false}
+
+        var index = columns
+        var countAce = 0
+        while(index<(columns*2)){
+            if(m[index].occupied)return false
+            countAce += if(m[index-columns].playingCard.value == getAceValue()) 1 else 0
+            index++
+        }
+        return countAce == getWinningCount()
+    }
+
     private fun getLastCellInRow(index:Int):BoardCell{
         var currentIndex = index
         var nextIndex = index+columns
@@ -124,8 +138,17 @@ class GameBoard(private var rows:Int,private var columns:Int) {
     }
 
     fun resetBoard(){
+        setAllCardsDrawn(false)
         clearStack()
         for(cell in m.iterator()){ cell.makeCellFree()}
+    }
+
+    fun setAllCardsDrawn(value:Boolean){
+        allCardsDrawn = value
+    }
+
+    fun getAllCardsDrawn():Boolean{
+        return allCardsDrawn
     }
 
     fun getFreeBoardCell(index:Int):BoardCell?{

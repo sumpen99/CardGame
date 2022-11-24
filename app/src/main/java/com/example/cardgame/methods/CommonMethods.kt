@@ -10,6 +10,8 @@ fun convertDpToPixel(value : Int):Int{
     return (value*getSystem().displayMetrics.density).toInt()
 }
 
+fun templateFunction(parameter:Any?):Unit{}
+
 fun setRandomPixels(){
     /*val width = bitmap.width
     val height = bitmap.height

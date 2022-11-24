@@ -17,6 +17,10 @@ class CounterTextView(context: Context,attrs: AttributeSet?=null):IThreading,App
         }
     }
 
+    fun getTimeTaken():Int{
+        return currentTimer
+    }
+
     fun resetClock(){
         currentTimer = 0
     }

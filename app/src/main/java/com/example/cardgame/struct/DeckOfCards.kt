@@ -42,4 +42,5 @@ class DeckOfCards (private val deckOfCards:Array<String>){
     fun getNextCardInDeck():String{
         return deckOfCards[shuffledDeck[nextCard++]]
     }
+
 }

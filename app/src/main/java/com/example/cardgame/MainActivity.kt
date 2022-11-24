@@ -2,7 +2,6 @@ package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
@@ -105,6 +104,9 @@ class MainActivity : AppCompatActivity() {
             i++
             cardsDrawn++
         }
+        if(cardsDrawn == getCardsInADeck()*getDecksToUse()){
+            gameBoard.setAllCardsDrawn(true)
+        }
     }
 
     private fun navigateFragment(fragment:Fragment){
@@ -164,6 +166,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun launchWinnerScreen(){
+        navigateFragment(WinnerFragment(counterTxt.getTimeTaken()))
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
@@ -209,9 +215,15 @@ class MainActivity : AppCompatActivity() {
 
     /**
      *              HIDE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
+     *              IF ALL CARDS IS DRAWN, CHECK FOR A WINNING MOVE
      * */
-    private fun hideCardView(cardView: CardImageView):Boolean{
-        return gameBoard.validRemove(cardView)
+    private fun hideCardView(cardView: CardImageView):Unit{
+        if(gameBoard.validRemove(cardView)){
+            cardView.hideCardTemporary()
+            if(!gameBoard.detectWinner()){
+                launchWinnerScreen()
+            }
+        }
     }
 
     /**
