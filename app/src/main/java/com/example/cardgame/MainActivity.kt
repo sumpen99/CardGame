@@ -2,7 +2,9 @@ package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.Toast
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
@@ -30,11 +32,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
     private lateinit var infoToUser:ToastMessage
+    private lateinit var bottomNavMenu:BottomNavigationView
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
-    private val rulesFragment = RulesFragment()
-    private val settingsFragment = SettingsFragment()
     private var currentFragment:Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +45,14 @@ class MainActivity : AppCompatActivity() {
         setUpGameBoard()
         setDataBinding()
         setUpInfoToUser()
+        setUpNavMenu()
         setEventListener()
         addNewView(getCardsToDraw())
         startClock()
+    }
+
+    private fun setUpNavMenu(){
+        bottomNavMenu = binding.bottomNavigationView
     }
 
     private fun setUpInfoToUser(){
@@ -67,11 +73,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setEventListener(){
-        val submitBtn = binding.submitBtn
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
-        val bottomNavMenu: BottomNavigationView = binding.bottomNavigationView
         counterTxt = binding.counterTxtView
 
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
@@ -79,9 +83,9 @@ class MainActivity : AppCompatActivity() {
         reverseBtn.setCallback(null,::reverseLastMove)
         bottomNavMenu.setOnItemSelectedListener {it: MenuItem ->
             when(it.itemId){
-                R.id.navHome->removeCurrentFragment()
-                R.id.navRules->navigateFragment(rulesFragment)
-                R.id.navSettings->navigateFragment(settingsFragment)
+                R.id.navHome->removeCurrentFragment(true)
+                R.id.navRules->navigateFragment(RulesFragment())
+                R.id.navSettings->navigateFragment(SettingsFragment())
             }
             true
         }
@@ -110,7 +114,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateFragment(fragment:Fragment){
-        //if(currentFragment==fragment){removeCurrentFragment();return}
         stopClock()
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.mainLayout,fragment).commit()
@@ -118,11 +121,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun removeCurrentFragment(){
+    private fun removeCurrentFragment(restartClock:Boolean){
         if(currentFragment!=null){
             supportFragmentManager.beginTransaction().remove(currentFragment!!).commit()
             currentFragment = null
-            startClock()
+            if(restartClock){startClock()}
         }
     }
 
@@ -166,8 +169,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun launchWinnerScreen(){
-        navigateFragment(WinnerFragment(counterTxt.getTimeTaken()))
+    private fun launchWinnerScreen(){
+        switchNavBarOnTouch(false)
+        navigateFragment(WinnerFragment(counterTxt.getTimeTaken(),::closeWinnerScreen,::closeWinnerScreen))
+    }
+
+    private fun closeWinnerScreen(parameter:Any?){
+        switchNavBarOnTouch(true)
+        removeCurrentFragment(false)
+    }
+
+    fun switchNavBarOnTouch(value:Boolean){
+        bottomNavMenu.menu.forEach { it.isEnabled = value }
     }
 
     override fun onDestroy() {
