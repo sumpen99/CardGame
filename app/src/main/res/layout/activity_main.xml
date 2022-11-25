@@ -76,25 +76,10 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/newgame"
                 android:tint="@color/white"
-                app:layout_constraintBottom_toTopOf="@+id/submitBtn"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reverseBtn" />
-
-            <com.example.cardgame.widget.CustomImageButton
-                android:id="@+id/submitBtn"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/submit"
-                android:tint="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/newGameBtn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.example.cardgame.widget.CustomImageButton

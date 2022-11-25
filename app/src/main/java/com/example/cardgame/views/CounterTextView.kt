@@ -6,6 +6,7 @@ import com.example.cardgame.interfaces.IThreading
 
 class CounterTextView(context: Context,attrs: AttributeSet?=null):IThreading,AppCompatTextView(context, attrs){
     private var callbackInProgress:Boolean = false
+    private var startedNewGame:Boolean = false
     private var maxTime:Int=999
     private var currentTimer:Int = 0
 
@@ -22,7 +23,18 @@ class CounterTextView(context: Context,attrs: AttributeSet?=null):IThreading,App
     }
 
     fun resetClock(){
+        text=""
+        startedNewGame = false
         currentTimer = 0
+        startedNewGame = false
+    }
+
+    fun getClockIsStarted():Boolean{
+        return startedNewGame
+    }
+
+    fun setClockIsStarted(value:Boolean){
+        startedNewGame = value
     }
 
     override fun startActivity() {

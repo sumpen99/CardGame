@@ -2,7 +2,6 @@ package com.example.cardgame
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
@@ -22,7 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 /*
 * TODO MAKE RULES PAGE
 * TODO MAKE UP SOME SETTINGS -> ADD WILD CARD (JOKER?)
-* TODO MAKE SOME KIND OF MESSAGE AFTER WIN/LOSS
+*
 * */
 
 
@@ -37,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
     private var currentFragment:Fragment? = null
+    private var firstRun:Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
         setUpInfoToUser()
         setUpNavMenu()
         setEventListener()
-        addNewView(getCardsToDraw())
-        startClock()
     }
 
     private fun setUpNavMenu(){
@@ -98,6 +96,7 @@ class MainActivity : AppCompatActivity() {
             informUser("No More Cards To Draw...")
             return
         }
+        if(!counterTxt.getClockIsStarted()){return}
         clearStack()
         var i = 0
         while(i<cardsToAdd){
@@ -134,8 +133,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun askForNewGame(parameter:Any?){
-        stopClock()
-        MessageToUser(this,null,null,::playerStartNewGame,::playerResumeGame,"Star New Game?")
+        if(firstRun){
+            firstRun = false
+            playerStartNewGame(null)
+        }
+        else{
+            stopClock()
+            MessageToUser(this,null,null,::playerStartNewGame,::playerResumeGame,"Start New Game?")
+        }
+    }
+
+    private fun resetFirstRun(){
+        firstRun = true
     }
 
     private fun clearStack(){
@@ -147,10 +156,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startClock(){
+        counterTxt.setClockIsStarted(true)
         executeNewThread(counterTxt)
     }
 
     private fun stopClock(){
+        counterTxt.setClockIsStarted(false)
         counterTxt.stopActivity()
     }
 
@@ -177,13 +188,39 @@ class MainActivity : AppCompatActivity() {
     private fun closeWinnerScreen(parameter:Any?){
         switchNavBarOnTouch(true)
         removeCurrentFragment(false)
+        resetProgram()
+        resetFirstRun()
     }
 
-    fun switchNavBarOnTouch(value:Boolean){
+    private fun switchNavBarOnTouch(value:Boolean){
         bottomNavMenu.menu.forEach { it.isEnabled = value }
     }
 
+    private fun resetProgram(){
+        cardsDrawn = 0
+        gameBoard.resetBoard()
+        deckOfCards.resetDeck()
+        counterTxt.resetClock()
+        clearCardViewsFromLayout()
+    }
+
+    override fun onPause() {
+        printToTerminal("OnPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        printToTerminal("OnStop")
+        super.onStop()
+    }
+
+    override fun onResume() {
+        printToTerminal("OnResume")
+        super.onResume()
+    }
+
     override fun onDestroy() {
+        printToTerminal("OnDestroy")
         super.onDestroy()
         _binding = null
     }
@@ -203,13 +240,9 @@ class MainActivity : AppCompatActivity() {
      *              START NEW GAME IF USER CLICK YES AND RESTART CLOCK
      * */
     private fun playerStartNewGame(parameter:Any?){
-        cardsDrawn = 0
-        gameBoard.resetBoard()
-        deckOfCards.resetDeck()
-        counterTxt.resetClock()
-        clearCardViewsFromLayout()
-        addNewView(getCardsToDraw())
+        resetProgram()
         startClock()
+        addNewView(getCardsToDraw())
     }
 
     /**
