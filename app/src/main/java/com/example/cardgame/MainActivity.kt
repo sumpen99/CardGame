@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         setUpInfoToUser()
         setUpNavMenu()
         setEventListener()
+        val env = getEnv(this,"USERNAME")
+        printToTerminal(env!!)
     }
 
     private fun setUpNavMenu(){
@@ -165,9 +167,6 @@ class MainActivity : AppCompatActivity() {
         counterTxt.stopActivity()
     }
 
-    /*
-    * Needs several loops to remove all children
-    * */
     private fun clearCardViewsFromLayout(){
         while(binding.cardViewLayout.childCount>1){
             var i = 1
@@ -205,23 +204,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        printToTerminal("OnPause")
         super.onPause()
+        printToTerminal("OnPause")
     }
 
     override fun onStop() {
-        printToTerminal("OnStop")
         super.onStop()
+        printToTerminal("OnStop")
     }
 
     override fun onResume() {
-        printToTerminal("OnResume")
         super.onResume()
+        printToTerminal("OnResume")
     }
 
     override fun onDestroy() {
-        printToTerminal("OnDestroy")
         super.onDestroy()
+        printToTerminal("OnDestroy")
         _binding = null
     }
 

@@ -15,8 +15,8 @@ import com.example.cardgame.widget.CustomImageButton
 class WinnerFragment(
     private val timeTaken: Int,
     private val callbackClose: (Any?) -> Unit,
-    private val callbackSubmit: (Any?) -> Unit,
-) : Fragment(R.layout.fragment_winner){
+    private val callbackSubmit: (Any?) -> Unit) : Fragment(R.layout.fragment_winner){
+
     private var _binding: FragmentWinnerBinding? = null
     private val binding get() = _binding!!
     private lateinit var buttonClose:CustomImageButton

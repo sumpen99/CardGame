@@ -71,3 +71,7 @@ fun getAceValue():Int{
 fun getWinningCount():Int{
     return 4
 }
+
+fun getCardRatio():Float{
+    return 1.4.toFloat()
+}
