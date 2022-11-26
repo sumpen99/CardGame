@@ -1,5 +1,5 @@
 package com.example.cardgame.tree
-import com.example.cardgame.methods.printToTerminal
+import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.struct.Node
 
 class BinarySearchTree {

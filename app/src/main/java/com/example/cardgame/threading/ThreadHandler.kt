@@ -1,7 +1,5 @@
 package com.example.cardgame.threading
 import com.example.cardgame.interfaces.IThreading
-import com.example.cardgame.methods.printToTerminal
-import com.example.cardgame.struct.ToastMessage
 
 private var listOfTBF:HashMap<Long,TBF> = hashMapOf()
 

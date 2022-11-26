@@ -1,4 +1,4 @@
-package com.example.cardgame
+package com.example.cardgame.fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.cardgame.R
 import com.example.cardgame.databinding.FragmentWinnerBinding
+import com.example.cardgame.enums.StringValidation
 import com.example.cardgame.methods.hideKeyboard
+import com.example.cardgame.methods.validString
+import com.example.cardgame.struct.ToastMessage
 import com.example.cardgame.widget.CustomImageButton
 
 class WinnerFragment(
@@ -51,7 +56,18 @@ class WinnerFragment(
         buttonSubmit = binding.submitWinnerBtn
         textViewTime.text = "$timeTaken"
         buttonClose.setCallback(null,callbackClose)
-        buttonSubmit.setCallback(null,callbackSubmit)
+        buttonSubmit.setCallback(null,::uploadScoreToServer)
+    }
+
+    private fun uploadScoreToServer(parameter:Any?):Unit{
+        val nameValid:StringValidation = validString(editTextName.text.toString())
+        if(nameValid != StringValidation.STRING_IS_OK){
+            ToastMessage(requireContext()).showMessage(nameValid.message,Toast.LENGTH_SHORT)
+        }
+        else{
+            val userCred:Array<String> = arrayOf(editTextName.text.toString(),"$timeTaken")
+            callbackSubmit(userCred)
+        }
     }
 
     override fun onDestroyView() {

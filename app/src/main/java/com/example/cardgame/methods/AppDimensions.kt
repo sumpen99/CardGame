@@ -2,6 +2,10 @@ package com.example.cardgame.methods
 import android.content.res.Resources
 val needScaling:Boolean = getNewWidth()<250
 
+fun getMaxStrSize():Int{
+    return 255
+}
+
 fun getScreenWidth() : Int{
     return Resources.getSystem().displayMetrics.widthPixels
 }

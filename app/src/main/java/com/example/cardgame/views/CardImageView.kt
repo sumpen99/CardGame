@@ -5,7 +5,7 @@ import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import com.example.cardgame.methods.getCardFromPath
-import com.example.cardgame.methods.getPlayingCard
+import com.example.cardgame.io.getPlayingCard
 import com.example.cardgame.struct.BoardCell
 
 class CardImageView(context: Context,

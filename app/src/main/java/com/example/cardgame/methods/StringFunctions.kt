@@ -1,6 +1,23 @@
 package com.example.cardgame.methods
 import com.example.cardgame.enums.PlayingCard
+import com.example.cardgame.enums.Token
 import com.example.cardgame.struct.PassedCheck
+
+fun getJsonToken(token:Char):Token{
+    if (token == ':') {return Token.JSON_OPEN_OBJECT}
+    if (token == '"') {return Token.JSON_OPEN_STRING}
+    if (token == '[') {return Token.JSON_OPEN_LIST}
+    if (token == '{') {return Token.JSON_OPEN_DIC}
+    if (token == ']') {return Token.JSON_CLOSE_LIST}
+    if (token == '}') {return Token.JSON_CLOSE_DIC}
+    if (token == ',') {return Token.JSON_NEW_PARAMETER}
+    if (token.code >= 48 && token.code <= 57) {return Token.JSON_NUMBER_VALUE}
+
+    if (token.code >= 65 && token.code <= 90 || token.code >= 97 && token.code <= 122){
+        return Token.JSON_STRING_VALUE
+    }
+    return Token.JSON_TOKEN_UNKNOWN
+}
 
 fun getCardFromPath(cardPath : String) : PlayingCard {
     val card = cardPath.split(".")[0].uppercase()

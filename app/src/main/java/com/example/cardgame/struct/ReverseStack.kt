@@ -1,6 +1,6 @@
 package com.example.cardgame.struct
 import com.example.cardgame.enums.StackOperation
-import com.example.cardgame.methods.printToTerminal
+import com.example.cardgame.io.printToTerminal
 
 class ReverseStack {
     var root:ReverseOperation?=null
