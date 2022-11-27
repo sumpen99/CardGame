@@ -13,7 +13,7 @@ fun apiServiceIsOk():Boolean{
 fun verifyApiService(context:Context){
     apiErrorMessage = null
     apiServiceValid = true
-    checkForCertications(context)
+    checkForCertications()
     val apiObject = ApiHandler(context,null,null)
     if(!apiObject.checkInternetConnectivity()){
         apiServiceValid = false
@@ -21,8 +21,8 @@ fun verifyApiService(context:Context){
     }
 }
 
-fun checkForCertications(context: Context){
-    if(getEnv(context,"username")==null){
+fun checkForCertications(){
+    if(getEnv("username")==null){
         setApiErrorMessage("Missing SSL Certificate")
         apiServiceValid = false
     }

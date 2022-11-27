@@ -55,10 +55,10 @@ class ApiHandler(val context: Context,
     }
 
     private fun login():String?{
-        val url = getEnv(context,"tokenAuth")
+        val url = getEnv("tokenAuth")
         if(url!=null){
-            val userName: String? = getEnv(context,"username")
-            val password: String? = getEnv(context,"password")
+            val userName: String? = getEnv("username")
+            val password: String? = getEnv("password")
             val parameters = "username=$userName&password=$password"
             val serverResponse: String = executePostRequest(parameters,url)
             if (serverResponse.isNotEmpty()) {
@@ -71,7 +71,7 @@ class ApiHandler(val context: Context,
 
     private fun urlUploadHighScore(){
         val token = login()
-        var url: String? = getEnv(context,"uploadNewHighScoreUrl")
+        var url: String? = getEnv("uploadNewHighScoreUrl")
         if (token != null && url!=null && args!=null) {
             url += "&name=${args!![0]}&score=${args!![1]}"
             val serverResponse: String = executeGetRequest(url, token)
@@ -84,7 +84,7 @@ class ApiHandler(val context: Context,
 
     private fun urlGetHighScore() {
         val token = login()
-        val url: String? = getEnv(context,"getHighScoreUrl")
+        val url: String? = getEnv("getHighScoreUrl")
         if (token != null && url!=null) {
             val serverResponse: String = executeGetRequest(url, token)
             if (serverResponse.isNotEmpty()) {

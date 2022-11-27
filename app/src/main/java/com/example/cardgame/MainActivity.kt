@@ -15,6 +15,7 @@ import com.example.cardgame.fragment.RulesFragment
 import com.example.cardgame.fragment.WinnerFragment
 import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.io.printToTerminal
+import com.example.cardgame.io.setAppEnvVariables
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.*
 import com.example.cardgame.threading.executeNewThread
@@ -43,7 +44,8 @@ class MainActivity : AppCompatActivity() {
         setUpInfoToUser()
         setUpNavMenu()
         setEventListener()
-        checkForCertications(this)
+        setAppEnvVariables(this)
+        checkForCertications()
     }
 
     private fun setUpNavMenu(){

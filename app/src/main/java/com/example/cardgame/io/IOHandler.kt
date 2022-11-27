@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.graphics.scale
+import com.example.cardgame.enums.EntrieType
+import com.example.cardgame.map.SMHashMap
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
 import java.io.*
@@ -19,6 +21,8 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManagerFactory
 
+var appEnvironmentVariables:SMHashMap?=null
+
 
 //https://gist.github.com/erickok/7692592
 fun loadSSLCert(context:Context):SSLSocketFactory?{
@@ -27,9 +31,10 @@ fun loadSSLCert(context:Context):SSLSocketFactory?{
         // Load CAs from an InputStream
         val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
         // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        //val pathSSL = getEnv(context,"pathssl")
+
         val pathSSL = "ssl/zonfri.crt"
         //val inputStream: InputStream = FileInputStream(pathSSL)
+
         val inputStream: InputStream = context.assets.open(pathSSL!!)
         val caInput: InputStream = BufferedInputStream(inputStream)
         val ca: Certificate
@@ -84,10 +89,8 @@ fun readInputStream(streamIn:HttpsURLConnection):String{
     var outPutData=""
     try{
         val bufferedStreamIn= BufferedReader(InputStreamReader(streamIn.inputStream))
-        line = bufferedStreamIn.readLine()
-        while(line!=null){
+        while((bufferedStreamIn.readLine()).also { line=it }!=null){
             outPutData+=line
-            line=bufferedStreamIn.readLine()
         }
         bufferedStreamIn.close()
     }
@@ -98,31 +101,34 @@ fun readInputStream(streamIn:HttpsURLConnection):String{
     return outPutData
 }
 
-fun getEnv(context: Context,key:String) : String? {
+fun setAppEnvVariables(context: Context,){
     val envPath = "environment/env"
-    var foundEnv:String?=null
-    var fRead:InputStream?=null
-    var reader:BufferedReader?=null
+    val fRead:InputStream?
+    val reader:BufferedReader?
     try {
         fRead  = context.assets.open(envPath)
         reader = BufferedReader(InputStreamReader(fRead))
     }
     catch (err:java.lang.Exception){
-        return foundEnv
+        return
     }
 
-    var line:String?=reader.readLine()
-    while(line != null){
-        val key_value = line.split(" ")
-        if(key_value[0]==key){
-            foundEnv = key_value[1]
-            break
-        }
-        line = reader.readLine()
+    appEnvironmentVariables = SMHashMap(10,.75f)
+    var line:String?
+    while((reader.readLine()).also{ line = it } != null){
+        val key_value = line!!.split(" ")
+        appEnvironmentVariables!!.addNewItem(key_value[0],key_value[1], EntrieType.ENTRIE_ENV_VARIABLE)
     }
     fRead.close()
     reader.close()
-    return foundEnv
+}
+
+fun getEnv(key:String) : String? {
+    if(appEnvironmentVariables!=null){
+        val envValue = appEnvironmentVariables!!.getValue(key) as Any?
+        if(envValue!=null){return envValue as String}
+    }
+    return null
 }
 
 

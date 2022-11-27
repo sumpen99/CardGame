@@ -1,4 +1,5 @@
 package com.example.cardgame.struct
+import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.methods.getCardsInADeck
 import com.example.cardgame.methods.getDecksToUse
 import com.example.cardgame.methods.getRandomInt
@@ -24,10 +25,12 @@ class DeckOfCards (private val deckOfCards:Array<String>){
         var i = 0
         var rndCard:Int
         while(i<numCards){
-            rndCard = getRandomInt(deckOfCards.size)
-            while(treeOfPlayingCards.itemReachedMaxCount(rndCard,decksToUse)){
+            //rndCard = getRandomInt(deckOfCards.size)
+            while(treeOfPlayingCards.itemReachedMaxCount((getRandomInt(deckOfCards.size)).also{rndCard=it},decksToUse)){}
+
+            /*while(treeOfPlayingCards.itemReachedMaxCount(rndCard,decksToUse)){
                 rndCard = getRandomInt(deckOfCards.size)
-            }
+            }*/
             treeOfPlayingCards.insert(rndCard)
             shuffledDeck[i]=rndCard
             i++
