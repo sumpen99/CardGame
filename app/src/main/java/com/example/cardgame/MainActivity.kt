@@ -267,6 +267,7 @@ class MainActivity : AppCompatActivity() {
      *
      * */
     private fun populateHighScoreTable(parameter:Any?){
+        // TODO SHOW MESSAGE IF SERVER DISCONNECTED
         if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
             try{
                 Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {

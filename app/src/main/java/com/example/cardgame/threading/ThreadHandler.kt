@@ -39,7 +39,6 @@ class TBF(var threadObject:IThreading) : Runnable {
         threadObject.setCallbackStatus(true)
         threadObject.startActivity()
         removeThread(myThreadId)
-        printToTerminal("Thread Is Done")
     }
 
     fun stopThreadActivity(){

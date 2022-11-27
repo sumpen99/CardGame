@@ -9,16 +9,38 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/txtHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Game Rules"
-        android:textColor="#43a047"
-        android:textSize="40sp"
-        android:textStyle="italic|bold"
+        android:text="RULES OF THE GAME"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.056">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/txtContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20sp"
+        android:gravity="left"
+        android:text="The objective of the game is to end up with all Aces left on the table.\n\nPress Start New Game\n\nWhenever you have multiple cards,within the same family,you are able to remove the lowvalue ones by doubleclicking.\nPress the deck in the bottom center of the screen to deal 4 more cards.If you encounter a free spot on the board you can move a card by drag/drop to that spot. Only cards at the end of each column are selectable."
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtHead"
+        app:layout_constraintVertical_bias="0.223">
+
+    </TextView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
