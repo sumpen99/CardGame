@@ -3,6 +3,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.cardgame.enums.ApiFunction
+import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.interfaces.IThreading
 import com.example.cardgame.io.*
 import com.example.cardgame.json.JsonObject
@@ -20,6 +21,8 @@ class ApiHandler(val context: Context,
     constructor(context:Context,args:Array<String>?,apiFunc: ApiFunction?):this(context,args,apiFunc,::templateFunction)
 
     private var callbackInProgress:Boolean = false
+    private var connectionDisconnected:Boolean = false
+    private var MAX_RESPONSE_TIME:Long = 3000
     private lateinit var httpsCon:HttpsURLConnection
 
     fun checkInternetConnectivity():Boolean{
@@ -90,7 +93,7 @@ class ApiHandler(val context: Context,
             if (serverResponse.isNotEmpty()) {
                 val json = JsonObject(serverResponse)
                 val table = json.getHighScoreValues()
-                if(table!=null){
+                if(table!=null && !connectionDisconnected){
                     callbackWhenFinnished(table)
                 }
             }
@@ -119,7 +122,8 @@ class ApiHandler(val context: Context,
                 httpsCon.useCaches = false
                 writeOutPutStream(httpsCon, postData)
                 outPutData = readInputStream(httpsCon)
-                stopActivity()
+                httpsCon.disconnect()
+                setCallbackStatus(false)
             }
         } catch (e: Exception) {
             printToTerminal(e.message.toString())
@@ -142,7 +146,8 @@ class ApiHandler(val context: Context,
                 httpsCon.setRequestProperty("Accept", "application/json")
                 httpsCon.setRequestProperty("Authorization", "Token $token")
                 outPutData = readInputStream(httpsCon)
-                stopActivity()
+                httpsCon.disconnect()
+                setCallbackStatus(false)
             }
         }
         catch(err:Exception){
@@ -151,8 +156,26 @@ class ApiHandler(val context: Context,
         return outPutData
     }
 
+    fun didConnectionDisconnect():Boolean{
+        return connectionDisconnected
+    }
+
+    private fun closeConnectionIfNeeded(){
+        try{ Thread(Runnable {
+            Thread.sleep(MAX_RESPONSE_TIME)
+            stopActivity()
+        }).start()}
+        catch(err:Exception){ printToTerminal(err.message.toString())}
+    }
+
+    private fun closeConnection(){
+        httpsCon.disconnect()
+        setCallbackStatus(false)
+    }
+
     // TODO START TIMER TO DISCONNECT?
     override fun startActivity() {
+        closeConnectionIfNeeded()
         when(apiFunc!!){
             ApiFunction.URL_GET_HIGHSCORE->{
                 urlGetHighScore()
@@ -164,8 +187,11 @@ class ApiHandler(val context: Context,
     }
 
     override fun stopActivity() {
-        httpsCon.disconnect()
-        setCallbackStatus(false)
+        if(getCallbackStatus()){
+            printToTerminal("Closing Connection ")
+            closeConnection()
+            connectionDisconnected = true
+        }
     }
 
     override fun setCallbackStatus(value: Boolean) {

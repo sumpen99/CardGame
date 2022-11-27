@@ -199,6 +199,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        // TODO HANDLE STUFF THAT NEEDS TO BE HANDLED
         super.onPause()
         printToTerminal("OnPause")
     }
