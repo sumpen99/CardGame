@@ -6,6 +6,7 @@ import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.map.SMHashMap
 import com.example.cardgame.methods.getJsonToken
 import com.example.cardgame.struct.RangeCheck
+import com.example.cardgame.struct.TableRowValues
 
 // EXPECTED FORMAT FROM SERVER
 //{"detail":"Invalid token."}
@@ -25,24 +26,28 @@ class JsonObject(var rawData:String) {
         parseData()
     }
 
-    fun getHighScoreValues(table: Array<String>) {
+    fun getHighScoreValues():Array<TableRowValues>?{
+        val table:Array<TableRowValues>?
         if (listCount > 0) {
+            table = Array(objList.objCount){TableRowValues()}
             var i = 0
             while(i<objList.objCount){
                 val objMap = objList.objMaps[i]
-                val valueName = objMap.getValue("name") as String?
-                val valueScore = objMap.getValue("score") as String?
-                if(i < table.size){ table[i] = "${i+1}. $valueName $valueScore"}
-                else{break}
+                val name = objMap.getValue("name") as String
+                val score = objMap.getValue("score") as String
+                table[i].setValues("${i+1}",name,score)
                 i++
             }
+            return  table
         }
         else if (objCount > 0) {
-            val valueName = objMap.getValue("name") as String?
-            val valueScore = objMap.getValue("score") as String?
-            table[0] = "1. $valueName $valueScore"
-            //printToTerminal("$valueName $valueScore")
+            table = Array(1){TableRowValues()}
+            val name = objMap.getValue("name") as String
+            val score = objMap.getValue("score") as String
+            table[0].setValues("1",name,score)
+            return  table
         }
+        return null
     }
 
     fun getServerResponse():String {

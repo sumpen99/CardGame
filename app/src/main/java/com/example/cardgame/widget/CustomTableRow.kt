@@ -7,7 +7,6 @@ import android.widget.TextView
 import com.example.cardgame.R
 
 class CustomTableRow(context: Context?, attrs: AttributeSet?,var index:String,var name:String,var score:String) : TableRow(context,attrs){
-
     init{
         inflate(context, R.layout.custom_table_row,this)
         setColumns()

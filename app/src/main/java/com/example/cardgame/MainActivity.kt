@@ -16,23 +16,11 @@ import com.example.cardgame.fragment.WinnerFragment
 import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.methods.*
-import com.example.cardgame.struct.BoardCell
-import com.example.cardgame.struct.DeckOfCards
-import com.example.cardgame.struct.MessageToUser
-import com.example.cardgame.struct.ToastMessage
+import com.example.cardgame.struct.*
 import com.example.cardgame.threading.executeNewThread
 import com.example.cardgame.views.CardImageView
 import com.example.cardgame.views.CounterTextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
-
-/*
-* TODO MAKE RULES PAGE
-* TODO MAKE UP SOME SETTINGS -> ADD WILD CARD (JOKER?)
-*
-* */
-
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var counterTxt: CounterTextView
@@ -193,10 +181,9 @@ class MainActivity : AppCompatActivity() {
     private fun launchHighScoreScreen(){
         //stopClock()
         //switchNavBarOnTouch(false)
-        val highScoreTable:Array<String> = Array(10){""}
-        if(getHighScoreFromServer(highScoreTable)){
-            navigateFragment(HighScoreFragment(highScoreTable))
-        }
+        navigateFragment(HighScoreFragment())
+        getHighScoreFromServer()
+
     }
 
     private fun switchNavBarOnTouch(value:Boolean){
@@ -259,12 +246,11 @@ class MainActivity : AppCompatActivity() {
      *              INTERNETCONNECTION IS AVAILABLE
      *
      * */
-    private fun getHighScoreFromServer(highScoreTable:Array<String>):Boolean{
+    private fun getHighScoreFromServer():Boolean{
         val apiObject = ApiHandler(this,null,null,::populateHighScoreTable)
         verifyApiService(this)
         if(apiServiceIsOk()){
             apiObject.setApiService(ApiFunction.URL_GET_HIGHSCORE)
-            apiObject.setArguments(highScoreTable)
             executeNewThread(apiObject)
             return true
         }
@@ -275,12 +261,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *              POPULATE HIGHSCORETABLE WITH DATA WHEN SERVER THREAD IS DONE
-     *              (currentFragment!=null) -> SHOULD BE ENOUGH...
+     *              POPULATE HIGHSCORETABLE WITH DATA (ON MAINTHREAD) WHEN SERVER THREAD IS DONE
+     *              IF THREAD HAS TAKEN TO MUCH TIME AND THE USER SHIFT VIEW -> DO NOTHING
+     *
      * */
     private fun populateHighScoreTable(parameter:Any?){
         if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
-            (currentFragment as IFragment).processWork()
+            Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
+                (currentFragment as IFragment).processWork(parameter)
+            })}
         }
     }
 

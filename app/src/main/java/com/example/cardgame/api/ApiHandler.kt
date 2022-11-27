@@ -7,6 +7,7 @@ import com.example.cardgame.interfaces.IThreading
 import com.example.cardgame.io.*
 import com.example.cardgame.json.JsonObject
 import com.example.cardgame.methods.templateFunction
+import com.example.cardgame.struct.TableRowValues
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
@@ -86,8 +87,10 @@ class ApiHandler(val context: Context,
             val serverResponse: String = executeGetRequest(url, token)
             if (serverResponse.isNotEmpty()) {
                 val json = JsonObject(serverResponse)
-                json.getHighScoreValues(args!!)
-                printArrayOfStrings(args!!)
+                val table = json.getHighScoreValues()
+                if(table!=null){
+                    callbackWhenFinnished(table)
+                }
             }
         }
     }
@@ -149,8 +152,6 @@ class ApiHandler(val context: Context,
         when(apiFunc!!){
             ApiFunction.URL_GET_HIGHSCORE->{
                 urlGetHighScore()
-                //printToTerminal("Server Is Done And We Exit Left!")
-                callbackWhenFinnished(null)
             }
             ApiFunction.URL_UPLOAD_HIGHSCORE->{
                 urlUploadHighScore()
