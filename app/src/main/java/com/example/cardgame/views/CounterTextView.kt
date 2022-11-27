@@ -13,7 +13,8 @@ class CounterTextView(context: Context,attrs: AttributeSet?=null):IThreading,App
     private fun startCounter(){
         while(callbackInProgress && currentTimer<=maxTime){
             text = "$currentTimer"
-            Thread.sleep(1000)
+            try{Thread.sleep(1000)}
+            catch(err:Exception){setCallbackStatus(false)}
             currentTimer++
         }
     }

@@ -7,7 +7,6 @@ import com.example.cardgame.interfaces.IThreading
 import com.example.cardgame.io.*
 import com.example.cardgame.json.JsonObject
 import com.example.cardgame.methods.templateFunction
-import com.example.cardgame.struct.TableRowValues
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
@@ -19,6 +18,9 @@ class ApiHandler(val context: Context,
                  var apiFunc: ApiFunction?,
                  var callbackWhenFinnished:(args:Any?)->Unit):IThreading {
     constructor(context:Context,args:Array<String>?,apiFunc: ApiFunction?):this(context,args,apiFunc,::templateFunction)
+
+    private var callbackInProgress:Boolean = false
+    private lateinit var httpsCon:HttpsURLConnection
 
     fun checkInternetConnectivity():Boolean{
         val connectivityManager:ConnectivityManager? = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -103,7 +105,7 @@ class ApiHandler(val context: Context,
             val urlObject = URL(url)
             val ssls: SSLSocketFactory? = loadSSLCert(context)
             if (ssls != null) {
-                val httpsCon = urlObject.openConnection() as HttpsURLConnection
+                httpsCon = urlObject.openConnection() as HttpsURLConnection
                 httpsCon.sslSocketFactory = ssls
                 httpsCon.doOutput = true
                 httpsCon.instanceFollowRedirects = false
@@ -117,6 +119,7 @@ class ApiHandler(val context: Context,
                 httpsCon.useCaches = false
                 writeOutPutStream(httpsCon, postData)
                 outPutData = readInputStream(httpsCon)
+                stopActivity()
             }
         } catch (e: Exception) {
             printToTerminal(e.message.toString())
@@ -130,7 +133,7 @@ class ApiHandler(val context: Context,
             val urlObject = URL(url)
             val ssls = loadSSLCert(context)
             if(ssls!=null){
-                val httpsCon = urlObject.openConnection() as HttpsURLConnection
+                httpsCon = urlObject.openConnection() as HttpsURLConnection
                 httpsCon.sslSocketFactory = ssls
                 //httpsCon.doOutput = true
                 httpsCon.doInput = true
@@ -139,6 +142,7 @@ class ApiHandler(val context: Context,
                 httpsCon.setRequestProperty("Accept", "application/json")
                 httpsCon.setRequestProperty("Authorization", "Token $token")
                 outPutData = readInputStream(httpsCon)
+                stopActivity()
             }
         }
         catch(err:Exception){
@@ -147,7 +151,7 @@ class ApiHandler(val context: Context,
         return outPutData
     }
 
-
+    // TODO START TIMER TO DISCONNECT?
     override fun startActivity() {
         when(apiFunc!!){
             ApiFunction.URL_GET_HIGHSCORE->{
@@ -160,13 +164,15 @@ class ApiHandler(val context: Context,
     }
 
     override fun stopActivity() {
+        httpsCon.disconnect()
+        setCallbackStatus(false)
     }
 
     override fun setCallbackStatus(value: Boolean) {
-
+        callbackInProgress = value
     }
 
     override fun getCallbackStatus():Boolean{
-        return false
+        return callbackInProgress
     }
 }

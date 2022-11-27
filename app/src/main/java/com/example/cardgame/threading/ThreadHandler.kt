@@ -1,5 +1,6 @@
 package com.example.cardgame.threading
 import com.example.cardgame.interfaces.IThreading
+import com.example.cardgame.io.printToTerminal
 
 private var listOfTBF:HashMap<Long,TBF> = hashMapOf()
 
@@ -32,13 +33,13 @@ fun removeThread(threadId:Long){
     }
 }
 
-
 class TBF(var threadObject:IThreading) : Runnable {
     var myThreadId:Long = 0
     override fun run() {
         threadObject.setCallbackStatus(true)
         threadObject.startActivity()
         removeThread(myThreadId)
+        printToTerminal("Thread Is Done")
     }
 
     fun stopThreadActivity(){

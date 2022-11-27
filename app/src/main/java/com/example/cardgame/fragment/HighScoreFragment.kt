@@ -3,7 +3,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
 import androidx.fragment.app.Fragment
 import com.example.cardgame.R
 import com.example.cardgame.databinding.FragmentHighscoreBinding
@@ -26,15 +25,6 @@ class HighScoreFragment : IFragment, Fragment(R.layout.fragment_highscore) {
         return binding.root
     }
 
-    fun populateTable(){
-        val table:TableLayout = binding.tableLayout
-        var i = 0
-        while(i<10){
-            table.addView(CustomTableRow(context,null,"${(i+1)}","Fredrik","999"))
-            i++
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -49,8 +39,6 @@ class HighScoreFragment : IFragment, Fragment(R.layout.fragment_highscore) {
                 table.addView(CustomTableRow(context,null,personData[i].index,personData[i].name,personData[i].score))
                 i++
             }
-
-
         }
     }
 

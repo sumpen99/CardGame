@@ -267,9 +267,14 @@ class MainActivity : AppCompatActivity() {
      * */
     private fun populateHighScoreTable(parameter:Any?){
         if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
-            Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
-                (currentFragment as IFragment).processWork(parameter)
-            })}
+            try{
+                Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
+                    (currentFragment as IFragment).processWork(parameter)
+                })}
+            }
+            catch(err:Exception){
+                printToTerminal(err.message.toString())
+            }
         }
     }
 
