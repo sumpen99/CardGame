@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:padding="20sp"
         android:gravity="left"
-        android:text="The objective of the game is to end up with all Aces left on the table.\n\nPress Start New Game\n\nWhenever you have multiple cards,within the same family,you are able to remove the lowvalue ones by doubleclicking.\nPress the deck in the bottom center of the screen to deal 4 more cards.If you encounter a free spot on the board you can move a card by drag/drop to that spot. Only cards at the end of each column are selectable."
+        android:text="The objective of the game is to end up with all Aces left on the table.\n\nPress Start New Game\n\nWhenever you have multiple cards,within the same family,you are able to remove the lowvalue ones by doubleclicking.\nPress the deck in the bottom center of the screen to deal 4 more cards.If you encounter a free spot on the board you can move a card by drag/drop to that spot. Only cards at the end of each column are selectable.If the clock stress you out, tap it.."
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

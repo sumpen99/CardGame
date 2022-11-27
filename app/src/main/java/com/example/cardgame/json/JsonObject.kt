@@ -11,7 +11,7 @@ import com.example.cardgame.struct.TableRowValues
 // EXPECTED FORMAT FROM SERVER
 //{"detail":"Invalid token."}
 //{"token":"00ae00c000a0fcb000d3d4598bac4c84e22474ce"}
-//[{"id":2,"name":"Fredrik","score":100},{"id":3,"name":"Johan","score":99}]
+//[{"id":2,"name":"Fredrik","score":100},{"id":3,"name":"Johan","score":99},...]
 //{"id":2,"name":"Fredrik","score":100}
 class JsonObject(var rawData:String) {
     var objMap:SMHashMap

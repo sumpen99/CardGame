@@ -20,6 +20,7 @@ import com.example.cardgame.struct.ToastMessage
 import com.example.cardgame.widget.CustomImageButton
 
 class WinnerFragment(
+    private val userAborted:Boolean,
     private val timeTaken: Int,
     private val callbackClose: (Any?) -> Unit,
     private val callbackSubmit: (Any?) -> Unit) :IFragment, Fragment(R.layout.fragment_winner){
@@ -61,9 +62,17 @@ class WinnerFragment(
         editTextName = binding.editText
         buttonClose = binding.closeWinnerBtn
         buttonSubmit = binding.submitWinnerBtn
-        textViewTime.text = "$timeTaken"
+        textViewTime.text = verifyIfTimeIsLegit()
         buttonClose.setCallback(null,callbackClose)
-        buttonSubmit.setCallback(null,::uploadScoreToServer)
+        if(!userAborted){buttonSubmit.setCallback(null,::uploadScoreToServer)}
+        else{buttonSubmit.setCallback(null,::rejectUpload)}
+    }
+
+    private fun verifyIfTimeIsLegit():String{
+        if(!userAborted){return "$timeTaken"}
+        else{
+            return "Wait..We have Reasons To Believe Your Winning Score Might Be A Little Of..."
+        }
     }
 
     private fun uploadScoreToServer(parameter:Any?):Unit{
@@ -75,6 +84,12 @@ class WinnerFragment(
             val userCred:Array<String> = arrayOf(editTextName.text.toString(),"$timeTaken")
             callbackSubmit(userCred)
         }
+    }
+
+    private fun rejectUpload(parameter:Any?):Unit{
+        val msg = "Only Valid Scores get Uploaded.."
+        ToastMessage(requireContext()).showMessage(msg,Toast.LENGTH_SHORT)
+
     }
 
     override fun onDestroyView() {

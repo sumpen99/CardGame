@@ -62,9 +62,7 @@ class ApiHandler(val context: Context,
             val parameters = "username=$userName&password=$password"
             val serverResponse: String = executePostRequest(parameters,url)
             if (serverResponse.isNotEmpty()) {
-                //printToTerminal(serverResponse)
                 val json = JsonObject(serverResponse)
-                //printToTerminal(json.objMap.getValue("token") as String)
                 return json.objMap.getValue("token") as String
             }
         }
@@ -78,7 +76,6 @@ class ApiHandler(val context: Context,
             url += "&name=${args!![0]}&score=${args!![1]}"
             val serverResponse: String = executeGetRequest(url, token)
             if (serverResponse.isNotEmpty()) {
-                //printToTerminal(serverResponse)
                 val json = JsonObject(serverResponse)
                 printToTerminal(json.getServerResponse())
             }
@@ -188,7 +185,6 @@ class ApiHandler(val context: Context,
 
     override fun stopActivity() {
         if(getCallbackStatus()){
-            printToTerminal("Closing Connection ")
             closeConnection()
             connectionDisconnected = true
         }

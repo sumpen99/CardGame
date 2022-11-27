@@ -18,11 +18,11 @@ class ToastMessage(val context: Context):Toast(context){
         }
     }
 
-    fun enoughTimeHasElapsed():Boolean{
+    private fun enoughTimeHasElapsed():Boolean{
         return System.currentTimeMillis()-lastShown > longDuration
     }
 
-    fun setTimer(){
+    private fun setTimer(){
         lastShown = System.currentTimeMillis()
     }
 }

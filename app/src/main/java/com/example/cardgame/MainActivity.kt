@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startClock(){
         counterTxt.setClockIsStarted(true)
-        executeNewThread(counterTxt)
+        if(!counterTxt.getAborted()){executeNewThread(counterTxt)}
     }
 
     private fun stopClock(){
@@ -175,12 +175,10 @@ class MainActivity : AppCompatActivity() {
     private fun launchWinnerScreen(){
         stopClock()
         switchNavBarOnTouch(false)
-        navigateFragment(WinnerFragment(counterTxt.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
+        navigateFragment(WinnerFragment(counterTxt.getAborted(),counterTxt.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
     }
 
     private fun launchHighScoreScreen(){
-        //stopClock()
-        //switchNavBarOnTouch(false)
         navigateFragment(HighScoreFragment())
         getHighScoreFromServer()
 
@@ -224,7 +222,7 @@ class MainActivity : AppCompatActivity() {
     //    ############################ CALLBACKS ############################
 
     /**
-     *              SEND HIGHSCORE TO SERVER IF NEEDED CERTIFICATES IS PRESENT AND
+     *              SEND SCORE TO SERVER IF NEEDED CERTIFICATES IS PRESENT AND
      *              INTERNETCONNECTION IS AVAILABLE
      * */
     private fun sendScoreToServer(parameter:Any?){
@@ -292,7 +290,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *              RESUME GAME IF USER CLICK YES AND RESTART CLOCK
+     *              RESUME GAME IF USER CLICK NO
      * */
     private fun playerResumeGame(parameter:Any?){
         startClock()
@@ -329,7 +327,7 @@ class MainActivity : AppCompatActivity() {
     private fun hideCardView(cardView: CardImageView):Unit{
         if(gameBoard.validRemove(cardView)){
             cardView.hideCardTemporary()
-            if(!gameBoard.detectWinner()){
+            if(gameBoard.detectWinner()){
                 launchWinnerScreen()
             }
         }
