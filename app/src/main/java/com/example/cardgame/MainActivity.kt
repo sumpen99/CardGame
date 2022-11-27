@@ -9,9 +9,11 @@ import com.example.cardgame.api.ApiHandler
 import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.enums.ApiFunction
+import com.example.cardgame.enums.FragmentInstance
 import com.example.cardgame.fragment.HighScoreFragment
 import com.example.cardgame.fragment.RulesFragment
 import com.example.cardgame.fragment.WinnerFragment
+import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var cardsDrawn : Int = 0
-    private var currentFragment:Fragment? = null
+    private var currentFragment: Fragment? = null
     private var firstRun:Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -234,7 +236,8 @@ class MainActivity : AppCompatActivity() {
     //    ############################ CALLBACKS ############################
 
     /**
-     *              CLOSE FRAGMENT WINNER WITHOUT SENDING SCORE TO SERVER
+     *              SEND HIGHSCORE TO SERVER IF NEEDED CERTIFICATES IS PRESENT AND
+     *              INTERNETCONNECTION IS AVAILABLE
      * */
     private fun sendScoreToServer(parameter:Any?){
         val apiObject = ApiHandler(this,null,null)
@@ -252,10 +255,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *              CLOSE FRAGMENT WINNER WITHOUT SENDING SCORE TO SERVER
+     *              GET HIGHSCORE FROM SERVER IF NEEDED CERTIFICATES IS PRESENT AND
+     *              INTERNETCONNECTION IS AVAILABLE
+     *
      * */
     private fun getHighScoreFromServer(highScoreTable:Array<String>):Boolean{
-        val apiObject = ApiHandler(this,null,null)
+        val apiObject = ApiHandler(this,null,null,::populateHighScoreTable)
         verifyApiService(this)
         if(apiServiceIsOk()){
             apiObject.setApiService(ApiFunction.URL_GET_HIGHSCORE)
@@ -268,6 +273,17 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+
+    /**
+     *              POPULATE HIGHSCORETABLE WITH DATA WHEN SERVER THREAD IS DONE
+     *              (currentFragment!=null) -> SHOULD BE ENOUGH...
+     * */
+    private fun populateHighScoreTable(parameter:Any?){
+        if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
+            (currentFragment as IFragment).processWork()
+        }
+    }
+
 
     /**
      *              CLOSE FRAGMENT WINNER

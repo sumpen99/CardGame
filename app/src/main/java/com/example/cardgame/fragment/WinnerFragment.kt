@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.cardgame.R
 import com.example.cardgame.databinding.FragmentWinnerBinding
+import com.example.cardgame.enums.FragmentInstance
 import com.example.cardgame.enums.StringValidation
+import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.methods.hideKeyboard
 import com.example.cardgame.methods.validString
 import com.example.cardgame.struct.ToastMessage
@@ -20,10 +22,10 @@ import com.example.cardgame.widget.CustomImageButton
 class WinnerFragment(
     private val timeTaken: Int,
     private val callbackClose: (Any?) -> Unit,
-    private val callbackSubmit: (Any?) -> Unit) : Fragment(R.layout.fragment_winner){
-
+    private val callbackSubmit: (Any?) -> Unit) :IFragment, Fragment(R.layout.fragment_winner){
     private var _binding: FragmentWinnerBinding? = null
     private val binding get() = _binding!!
+    private lateinit var fragmentID: FragmentInstance
     private lateinit var buttonClose:CustomImageButton
     private lateinit var buttonSubmit:CustomImageButton
     private lateinit var editTextName:EditText
@@ -35,6 +37,7 @@ class WinnerFragment(
         val view: View = binding.root
         setEventListener(view)
         setButtons()
+        setFragmentID()
         return view
     }
 
@@ -77,6 +80,16 @@ class WinnerFragment(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun processWork(parameter:Any?){}
+
+    override fun setFragmentID(){
+        fragmentID = FragmentInstance.FRAGMENT_WINNER
+    }
+
+    override fun getFragmentID(): FragmentInstance {
+        return fragmentID
     }
 
 }

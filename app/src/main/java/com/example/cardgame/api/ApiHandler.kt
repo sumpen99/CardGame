@@ -6,13 +6,18 @@ import com.example.cardgame.enums.ApiFunction
 import com.example.cardgame.interfaces.IThreading
 import com.example.cardgame.io.*
 import com.example.cardgame.json.JsonObject
+import com.example.cardgame.methods.templateFunction
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLSocketFactory
 
 
-class ApiHandler(val context: Context,var args:Array<String>?=null,var apiFunc: ApiFunction?):IThreading {
+class ApiHandler(val context: Context,
+                 var args:Array<String>?=null,
+                 var apiFunc: ApiFunction?,
+                 var callbackWhenFinnished:(args:Any?)->Unit):IThreading {
+    constructor(context:Context,args:Array<String>?,apiFunc: ApiFunction?):this(context,args,apiFunc,::templateFunction)
 
     fun checkInternetConnectivity():Boolean{
         val connectivityManager:ConnectivityManager? = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -144,6 +149,8 @@ class ApiHandler(val context: Context,var args:Array<String>?=null,var apiFunc: 
         when(apiFunc!!){
             ApiFunction.URL_GET_HIGHSCORE->{
                 urlGetHighScore()
+                //printToTerminal("Server Is Done And We Exit Left!")
+                callbackWhenFinnished(null)
             }
             ApiFunction.URL_UPLOAD_HIGHSCORE->{
                 urlUploadHighScore()

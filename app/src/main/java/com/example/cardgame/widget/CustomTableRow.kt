@@ -10,10 +10,10 @@ class CustomTableRow(context: Context?, attrs: AttributeSet?,var index:String,va
 
     init{
         inflate(context, R.layout.custom_table_row,this)
-        setColumns("1","Fredrik Sundström","999")
+        setColumns()
     }
 
-    fun setColumns(index:String,name:String,score:String){
+    private fun setColumns(){
         val rowLayout = getChildAt(0) as LinearLayout
         val rowIndex:TextView = rowLayout.getChildAt(0) as TextView
         val rowName:TextView =  rowLayout.getChildAt(1) as TextView
