@@ -29,11 +29,17 @@ class WinnerFragment(
     private lateinit var editTextName:EditText
     private lateinit var textViewTime: TextView
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         _binding = FragmentWinnerBinding.inflate(inflater,container,false)
         val view: View = binding.root
+        setEventListener(view)
+        setButtons()
+        return view
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setEventListener(view:View){
         view.setOnTouchListener { v, event ->
             when(event.actionMasked){
                 MotionEvent.ACTION_DOWN -> {editTextName.hideKeyboard()}
@@ -45,8 +51,6 @@ class WinnerFragment(
             }
             true
         }
-        setButtons()
-        return view
     }
 
     private fun setButtons(){

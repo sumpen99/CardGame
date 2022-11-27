@@ -91,7 +91,6 @@ fun readInputStream(streamIn:HttpsURLConnection):String{
         bufferedStreamIn.close()
     }
     catch(err:java.lang.Exception){
-        printToTerminal("error!!")
         printToTerminal(err.message.toString())
     }
 

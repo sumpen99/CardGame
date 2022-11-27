@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
         //switchNavBarOnTouch(false)
         val highScoreTable:Array<String> = Array(10){""}
         if(getHighScoreFromServer(highScoreTable)){
-            navigateFragment(HighScoreFragment())
+            navigateFragment(HighScoreFragment(highScoreTable))
         }
     }
 
@@ -254,12 +254,12 @@ class MainActivity : AppCompatActivity() {
     /**
      *              CLOSE FRAGMENT WINNER WITHOUT SENDING SCORE TO SERVER
      * */
-    private fun getHighScoreFromServer(parameter:Any?):Boolean{
+    private fun getHighScoreFromServer(highScoreTable:Array<String>):Boolean{
         val apiObject = ApiHandler(this,null,null)
         verifyApiService(this)
         if(apiServiceIsOk()){
             apiObject.setApiService(ApiFunction.URL_GET_HIGHSCORE)
-            apiObject.setArguments(parameter as Array<String>)
+            apiObject.setArguments(highScoreTable)
             executeNewThread(apiObject)
             return true
         }
