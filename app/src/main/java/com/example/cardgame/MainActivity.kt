@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity() {
      *              INTERNETCONNECTION IS AVAILABLE
      * */
     private fun sendScoreToServer(parameter:Any?){
-        val apiObject = ApiHandler(this,null,null)
+        val apiObject = ApiHandler(this,null,null,null,::showApiResponseCode)
         verifyApiService(this)
         if(apiServiceIsOk()){
             //printToTerminal("UserName:${userName_userScore[0]} UserScore:${userName_userScore[1]}")
@@ -260,7 +260,7 @@ class MainActivity : AppCompatActivity() {
      *
      * */
     private fun getHighScoreFromServer():Boolean{
-        val apiObject = ApiHandler(this,null,null,::populateHighScoreTable)
+        val apiObject = ApiHandler(this,null,null,::populateHighScoreTable,null)
         verifyApiService(this)
         if(apiServiceIsOk()){
             apiObject.setApiService(ApiFunction.URL_GET_HIGHSCORE)
@@ -289,6 +289,21 @@ class MainActivity : AppCompatActivity() {
             catch(err:Exception){
                 printToTerminal(err.message.toString())
             }
+        }
+    }
+
+    /**
+     *              SHOW RESPONSECODE FROM SERVER, MOSTLY FOR TESTING
+     *
+     * */
+    private fun showApiResponseCode(responseCode:Int){
+        try{
+            Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
+                infoToUser.showMessage("ServerResponseCode : $responseCode ",Toast.LENGTH_SHORT)
+            })}
+        }
+        catch(err:Exception){
+            printToTerminal(err.message.toString())
         }
     }
 
@@ -341,7 +356,7 @@ class MainActivity : AppCompatActivity() {
     private fun hideCardView(cardView: CardImageView):Unit{
         if(gameBoard.validRemove(cardView)){
             cardView.hideCardTemporary()
-            if(gameBoard.detectWinner()){
+            if(!gameBoard.detectWinner()){
                 launchWinnerScreen()
             }
         }

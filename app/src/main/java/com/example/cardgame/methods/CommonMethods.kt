@@ -48,7 +48,8 @@ fun convertDpToPixel(value : Int):Int{
     return (value*getSystem().displayMetrics.density).toInt()
 }
 
-fun templateFunction(parameter:Any?):Unit{}
+fun templateFunctionAny(parameter:Any?):Unit{}
+fun templateFunctionInt(parameter:Int):Unit{}
 
 fun hashKey(key:String,capacity:Int):Int{
     return Math.abs(fnv1a(key).toInt()) % capacity

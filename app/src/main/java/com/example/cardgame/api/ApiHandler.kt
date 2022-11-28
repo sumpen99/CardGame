@@ -3,11 +3,11 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.example.cardgame.enums.ApiFunction
-import com.example.cardgame.interfaces.IFragment
 import com.example.cardgame.interfaces.IThreading
 import com.example.cardgame.io.*
 import com.example.cardgame.json.JsonObject
-import com.example.cardgame.methods.templateFunction
+import com.example.cardgame.methods.templateFunctionAny
+import com.example.cardgame.methods.templateFunctionInt
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
@@ -17,12 +17,16 @@ import javax.net.ssl.SSLSocketFactory
 class ApiHandler(val context: Context,
                  var args:Array<String>?=null,
                  var apiFunc: ApiFunction?,
-                 var callbackWhenFinnished:(args:Any?)->Unit):IThreading {
-    constructor(context:Context,args:Array<String>?,apiFunc: ApiFunction?):this(context,args,apiFunc,::templateFunction)
+                 var callbackWhenFinnished:(args:Any?)->Unit,
+                 var callbackShowResponseCode:(args:Int)->Unit):IThreading {
+    constructor(context:Context,args:Array<String>?,apiFunc:ApiFunction?,para:Any?,callbackShowResponseCode:(args:Int)->Unit):this(context,args,apiFunc,::templateFunctionAny,callbackShowResponseCode)
+    constructor(context:Context,args:Array<String>?,apiFunc:ApiFunction?,callbackWhenFinnished:(args:Any?)->Unit,para:Any?):this(context,args,apiFunc,callbackWhenFinnished,::templateFunctionInt)
+    constructor(context:Context,args:Array<String>?,apiFunc:ApiFunction?):this(context,args,apiFunc,::templateFunctionAny,::templateFunctionInt)
 
     private var callbackInProgress:Boolean = false
     private var connectionDisconnected:Boolean = false
     private var MAX_RESPONSE_TIME:Long = 3000
+    private var RESPONSE_CODE:Int = 0
     private lateinit var httpsCon:HttpsURLConnection
 
     fun checkInternetConnectivity():Boolean{
@@ -119,6 +123,7 @@ class ApiHandler(val context: Context,
                 httpsCon.useCaches = false
                 writeOutPutStream(httpsCon, postData)
                 outPutData = readInputStream(httpsCon)
+                RESPONSE_CODE =  httpsCon.responseCode
                 httpsCon.disconnect()
                 setCallbackStatus(false)
             }
@@ -143,6 +148,7 @@ class ApiHandler(val context: Context,
                 httpsCon.setRequestProperty("Accept", "application/json")
                 httpsCon.setRequestProperty("Authorization", "Token $token")
                 outPutData = readInputStream(httpsCon)
+                RESPONSE_CODE =  httpsCon.responseCode
                 httpsCon.disconnect()
                 setCallbackStatus(false)
             }
@@ -151,6 +157,10 @@ class ApiHandler(val context: Context,
             printToTerminal(err.message.toString())
         }
         return outPutData
+    }
+
+    fun getResponseCode():Int{
+        return RESPONSE_CODE
     }
 
     fun didConnectionDisconnect():Boolean{
@@ -181,6 +191,7 @@ class ApiHandler(val context: Context,
                 urlUploadHighScore()
             }
         }
+        callbackShowResponseCode(getResponseCode())
     }
 
     override fun stopActivity() {

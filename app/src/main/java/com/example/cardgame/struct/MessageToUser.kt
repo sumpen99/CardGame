@@ -3,10 +3,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
-import com.example.cardgame.methods.templateFunction
+import com.example.cardgame.methods.templateFunctionAny
 
 class MessageToUser(val context:Context,val view: View?,val args:Any?,val callbackYes:(args:Any?)->Unit,val callbackNo:(args:Any?)->Unit,val message:String){
-    constructor(context:Context,view: View?,args:Any?,callbackYes:(args:Any?)->Unit,message:String):this(context,view,args,callbackYes,::templateFunction,message)
+    constructor(context:Context,view: View?,args:Any?,callbackYes:(args:Any?)->Unit,message:String):this(context,view,args,callbackYes,::templateFunctionAny,message)
+    constructor(context:Context,view: View?,args:Any?,message:String):this(context,view,args,::templateFunctionAny,::templateFunctionAny,message)
 
     init{ showMessage()}
 
