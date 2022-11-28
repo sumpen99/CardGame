@@ -1,23 +1,41 @@
 package com.example.cardgame.struct
+import com.example.cardgame.enums.PlayingCard
 import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.methods.getCardsInADeck
+import com.example.cardgame.methods.getCardsToDraw
 import com.example.cardgame.methods.getDecksToUse
 import com.example.cardgame.methods.getRandomInt
 import com.example.cardgame.tree.BinarySearchTree
 
 class DeckOfCards (private val deckOfCards:Array<String>){
-    lateinit var shuffledDeck:MutableList<Int>
-    val decksToUse = getDecksToUse()
-    val numCards = decksToUse*getCardsInADeck()
+    private lateinit var shuffledDeck:List<CardInfo>
+    private var mapOfCards = mutableMapOf<String,PlayingCard>()
+    private val decksToUse = getDecksToUse()
+    private val numCards = decksToUse*getCardsInADeck()
     var nextCard:Int = 0
 
     init{
         setDeck()
+        mapCardPathToPlayingCard()
         shuffleDeck()
     }
 
     private fun setDeck(){
-        shuffledDeck = MutableList(numCards){0}
+        shuffledDeck = List(numCards){ CardInfo() }
+    }
+
+    private fun mapCardPathToPlayingCard(){
+        val cards = PlayingCard.values()
+        var i = 0
+        while(i<cards.size){
+            mapOfCards[cards[i].name] = cards[i]
+            i++;
+        }
+    }
+
+    private fun getPlayingCardFromPath(path:String):PlayingCard{
+        val cardName = path.split(".")[0].uppercase()
+        return mapOfCards[cardName]!!
     }
 
     private fun shuffleDeck(){
@@ -25,14 +43,9 @@ class DeckOfCards (private val deckOfCards:Array<String>){
         var i = 0
         var rndCard:Int
         while(i<numCards){
-            //rndCard = getRandomInt(deckOfCards.size)
             while(treeOfPlayingCards.itemReachedMaxCount((getRandomInt(deckOfCards.size)).also{rndCard=it},decksToUse)){}
-
-            /*while(treeOfPlayingCards.itemReachedMaxCount(rndCard,decksToUse)){
-                rndCard = getRandomInt(deckOfCards.size)
-            }*/
             treeOfPlayingCards.insert(rndCard)
-            shuffledDeck[i]=rndCard
+            shuffledDeck[i].setValues(deckOfCards[rndCard],getPlayingCardFromPath(deckOfCards[rndCard]))
             i++
         }
     }
@@ -42,8 +55,8 @@ class DeckOfCards (private val deckOfCards:Array<String>){
         shuffleDeck()
     }
 
-    fun getNextCardInDeck():String{
-        return deckOfCards[shuffledDeck[nextCard++]]
+    fun getNextCardInDeck():CardInfo{
+        return shuffledDeck[nextCard++]
     }
 
 }

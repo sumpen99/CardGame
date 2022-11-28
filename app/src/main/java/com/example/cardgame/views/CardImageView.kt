@@ -4,13 +4,14 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
-import com.example.cardgame.methods.getCardFromPath
-import com.example.cardgame.io.getPlayingCard
+import com.example.cardgame.io.getPlayingCardBitMap
+import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.struct.BoardCell
+import com.example.cardgame.struct.CardInfo
 
 class CardImageView(context: Context,
                     attrs: AttributeSet?=null,
-                    private var cardPath:String,
+                    private var cardInfo:CardInfo,
                     var boardCell:BoardCell,
                     val callbackDestroy:(CardImageView)->Unit,
                     val callbackHide:(CardImageView)->Unit,
@@ -30,11 +31,11 @@ class CardImageView(context: Context,
         setDimension()
         setPosition()
         setBoardCell()
-
+        storeZ()
     }
 
     private fun setBitMap(){
-        val bitmap = getPlayingCard(context,"cards/${cardPath}")
+        val bitmap = getPlayingCardBitMap(context,"cards/${cardInfo.path}")
         bitmapWidth = bitmap.width
         bitmapHeight = bitmap.height
         setImageBitmap(bitmap)
@@ -51,7 +52,7 @@ class CardImageView(context: Context,
 
     private fun setBoardCell(){
         boardCell.setOccupied()
-        boardCell.setKeyValue(getCardFromPath(cardPath))
+        boardCell.setKeyValue(cardInfo.playingCard)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -153,6 +154,12 @@ class CardImageView(context: Context,
 
     private fun hideSelfFromParent(){
         callbackHide(this)
+    }
+
+    fun implicitResetCardPosition(){
+        x = boardCell.x
+        y = boardCell.y
+        z = lastZ
     }
 
     fun removeSelfFromParent(){

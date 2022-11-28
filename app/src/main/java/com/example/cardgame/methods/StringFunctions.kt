@@ -19,17 +19,6 @@ fun getJsonToken(token:Char):Token{
     return Token.JSON_TOKEN_UNKNOWN
 }
 
-fun getCardFromPath(cardPath : String) : PlayingCard {
-    val card = cardPath.split(".")[0].uppercase()
-    var i = 0
-    val cards = PlayingCard.values()
-    while(i<cards.size){
-        if(card == cards[i].name){return cards[i]}
-        i++;
-    }
-    return PlayingCard.JOKER
-}
-
 fun cardFamilyEquals(cardOne:PlayingCard,cardTwo:PlayingCard):Boolean{
     return cardOne.cardFamily == cardTwo.cardFamily
 }

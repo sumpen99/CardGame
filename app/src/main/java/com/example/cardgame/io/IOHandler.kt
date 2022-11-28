@@ -23,6 +23,8 @@ import javax.net.ssl.TrustManagerFactory
 
 var appEnvironmentVariables:SMHashMap?=null
 
+//var appEnvironmentVariables:Map<String,String>?=null
+
 
 //https://gist.github.com/erickok/7692592
 fun loadSSLCert(context:Context):SSLSocketFactory?{
@@ -32,7 +34,7 @@ fun loadSSLCert(context:Context):SSLSocketFactory?{
         val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
         // From https://www.washington.edu/itconnect/security/ca/load-der.crt
 
-        val pathSSL = "ssl/zonfri.crt"
+        val pathSSL = getEnv("pathssl")
         //val inputStream: InputStream = FileInputStream(pathSSL)
 
         val inputStream: InputStream = context.assets.open(pathSSL!!)
@@ -74,29 +76,19 @@ fun loadSSLCert(context:Context):SSLSocketFactory?{
 }
 
 fun writeOutPutStream(streamOut:HttpsURLConnection,postData:ByteArray){
-    try{
-        val wr = DataOutputStream(streamOut.outputStream)
-        wr.write(postData)
-        wr.close()
-    }
-    catch(err:java.lang.Exception){
-        printToTerminal(err.message.toString())
-    }
+    val wr = DataOutputStream(streamOut.outputStream)
+    try{wr.write(postData)}
+    catch(err:java.lang.Exception){printToTerminal(err.message.toString())}
+    finally{wr.close()}
 }
 
 fun readInputStream(streamIn:HttpsURLConnection):String{
     var line:String?
     var outPutData=""
-    try{
-        val bufferedStreamIn= BufferedReader(InputStreamReader(streamIn.inputStream))
-        while((bufferedStreamIn.readLine()).also { line=it }!=null){
-            outPutData+=line
-        }
-        bufferedStreamIn.close()
-    }
-    catch(err:java.lang.Exception){
-        printToTerminal(err.message.toString())
-    }
+    val bufferedStreamIn= BufferedReader(InputStreamReader(streamIn.inputStream))
+    try{while((bufferedStreamIn.readLine()).also { line=it }!=null){outPutData+=line}}
+    catch(err:java.lang.Exception){printToTerminal(err.message.toString())}
+    finally{bufferedStreamIn.close()}
 
     return outPutData
 }
@@ -110,14 +102,17 @@ fun setAppEnvVariables(context: Context,){
         reader = BufferedReader(InputStreamReader(fRead))
     }
     catch (err:java.lang.Exception){
+        printToTerminal(err.message.toString())
         return
     }
 
+    //appEnvironmentVariables = mutableMapOf<String,String>()
     appEnvironmentVariables = SMHashMap(10,.75f)
     var line:String?
     while((reader.readLine()).also{ line = it } != null){
         val key_value = line!!.split(" ")
         appEnvironmentVariables!!.addNewItem(key_value[0],key_value[1], EntrieType.ENTRIE_ENV_VARIABLE)
+        //(appEnvironmentVariables as MutableMap<String, String>)[key_value[0]] = key_value[1]
     }
     fRead.close()
     reader.close()
@@ -125,14 +120,14 @@ fun setAppEnvVariables(context: Context,){
 
 fun getEnv(key:String) : String? {
     if(appEnvironmentVariables!=null){
-        val envValue = appEnvironmentVariables!!.getValue(key) as Any?
+        val envValue = appEnvironmentVariables!!.getValue(key)
         if(envValue!=null){return envValue as String}
     }
     return null
 }
 
 
-fun getPlayingCard(context: Context, filePath: String) : Bitmap {
+fun getPlayingCardBitMap(context: Context, filePath: String) : Bitmap {
     //printToTerminal("$needScaling")
     /*val imagePath = "./assets/cards/clubs_2.png"*/
     val inputStream : InputStream = context.assets.open(filePath)

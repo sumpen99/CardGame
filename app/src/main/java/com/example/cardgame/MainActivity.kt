@@ -100,8 +100,9 @@ class MainActivity : AppCompatActivity() {
         var i = 0
         while(i<cardsToAdd){
             val boardCell = gameBoard.getFreeBoardCell(i)
+            val cardInfo = deckOfCards.getNextCardInDeck()
             binding.cardViewLayout.addView(
-                CardImageView(this,null,deckOfCards.getNextCardInDeck(),boardCell!!,::removeCardView,::hideCardView,::cardViewIsFree,::cardViewRePosition),
+                CardImageView(this,null,cardInfo,boardCell!!,::removeCardView,::hideCardView,::cardViewIsFree,::cardViewRePosition),
                 binding.cardViewLayout.childCount)
             i++
             cardsDrawn++
@@ -174,6 +175,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun resetViewsOnPause(){
+        var i = 0
+        val childCount = binding.cardViewLayout.childCount
+        while(i<childCount){
+            val cardImageView = binding.cardViewLayout.getChildAt(i)
+            if(cardImageView is CardImageView){cardImageView.implicitResetCardPosition()}
+            i++
+        }
+    }
+
     private fun launchWinnerScreen(){
         stopClock()
         switchNavBarOnTouch(false)
@@ -201,6 +212,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         // TODO HANDLE STUFF THAT NEEDS TO BE HANDLED
         super.onPause()
+        resetViewsOnPause()
         printToTerminal("OnPause")
     }
 
