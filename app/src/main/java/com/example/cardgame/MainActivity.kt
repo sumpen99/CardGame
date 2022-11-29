@@ -10,6 +10,7 @@ import com.example.cardgame.board.GameBoard
 import com.example.cardgame.databinding.ActivityMainBinding
 import com.example.cardgame.enums.ApiFunction
 import com.example.cardgame.enums.FragmentInstance
+import com.example.cardgame.enums.HttpResponse
 import com.example.cardgame.fragment.HighScoreFragment
 import com.example.cardgame.fragment.RulesFragment
 import com.example.cardgame.fragment.WinnerFragment
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadCards(){
-        deckOfCards = DeckOfCards(assets.list("cards")!!)
+        deckOfCards = DeckOfCards()
     }
 
     private fun setDataBinding(){
@@ -240,7 +241,8 @@ class MainActivity : AppCompatActivity() {
      *              INTERNETCONNECTION IS AVAILABLE
      * */
     private fun sendScoreToServer(parameter:Any?){
-        val apiObject = ApiHandler(this,null,null,null,::showApiResponseCode)
+        val apiObject = ApiHandler(this,null,null)
+        apiObject.setCallbackResponseCode(::showApiResponseCode)
         verifyApiService(this)
         if(apiServiceIsOk()){
             //printToTerminal("UserName:${userName_userScore[0]} UserScore:${userName_userScore[1]}")
@@ -260,7 +262,9 @@ class MainActivity : AppCompatActivity() {
      *
      * */
     private fun getHighScoreFromServer():Boolean{
-        val apiObject = ApiHandler(this,null,null,::populateHighScoreTable,null)
+        val apiObject = ApiHandler(this,null,null)
+        apiObject.setCallbackResponseCode(::showApiResponseCode)
+        apiObject.setCallbackFinished(::populateHighScoreTable)
         verifyApiService(this)
         if(apiServiceIsOk()){
             apiObject.setApiService(ApiFunction.URL_GET_HIGHSCORE)
@@ -296,10 +300,10 @@ class MainActivity : AppCompatActivity() {
      *              SHOW RESPONSECODE FROM SERVER, MOSTLY FOR TESTING
      *
      * */
-    private fun showApiResponseCode(responseCode:Int){
+    private fun showApiResponseCode(responseCode:HttpResponse){
         try{
             Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
-                infoToUser.showMessage("ServerResponseCode : $responseCode ",Toast.LENGTH_SHORT)
+                infoToUser.showMessage(responseCode.name,Toast.LENGTH_SHORT)
             })}
         }
         catch(err:Exception){

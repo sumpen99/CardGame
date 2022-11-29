@@ -5,9 +5,12 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.graphics.scale
 import com.example.cardgame.enums.EntrieType
+import com.example.cardgame.enums.PlayingCard
 import com.example.cardgame.map.SMHashMap
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.BoardCell
+import com.example.cardgame.struct.CardInfo
+import com.example.cardgame.struct.DeckOfCards
 import java.io.*
 import java.security.KeyManagementException
 import java.security.KeyStore
@@ -155,8 +158,21 @@ fun printGameBoard(gameBoard:Array<BoardCell>){
 
 }
 
-fun printDeckOfCards(cards:Array<String>?){
-    if(cards!=null){printArrayOfStrings(cards!!)}
+fun printDeckOfCards(shuffledDeck:List<CardInfo>){
+    var i = 0
+    while(i<shuffledDeck.size){
+        val card = shuffledDeck[i++]
+        //printCardInfo(card)
+        printPlayingCard(card.playingCard)
+    }
+}
+
+fun printCardInfo(cardInfo:CardInfo){
+    printToTerminal("${cardInfo.playingCard} ${cardInfo.path}")
+}
+
+fun printPlayingCard(card:PlayingCard){
+    printToTerminal("${card.cardFamily} ${card.value}")
 }
 
 fun printArrayOfStrings(arr:Array<String>){

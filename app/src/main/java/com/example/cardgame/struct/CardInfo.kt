@@ -5,8 +5,8 @@ class CardInfo{
     lateinit var playingCard:PlayingCard
     lateinit var path:String
 
-    fun setValues(pathToCard:String,currentCard:PlayingCard){
-        path = pathToCard
+    fun setValues(currentCard:PlayingCard){
         playingCard = currentCard
+        path = "${currentCard.name.lowercase()}.png"
     }
 }
