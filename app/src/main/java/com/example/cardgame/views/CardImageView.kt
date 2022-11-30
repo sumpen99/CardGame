@@ -24,8 +24,6 @@ class CardImageView(context: Context,
     private var bitmapHeight:Int = 0
     private var onMove:Boolean = false
     private var hiddenCard:Boolean = false
-    private val CLICK_RATIO = 150
-    private var leftLastClick: Long = 0
     init{
         setBitMap()
         setDimension()
@@ -57,7 +55,7 @@ class CardImageView(context: Context,
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if(hiddenCard){return false}
-        if(callbackTouch(this)){
+        if(onMove || callbackTouch(this)){
             //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
             //val pointerIndex = event.actionIndex
             //val pointerId = event.getPointerId(pointerIndex)
@@ -71,7 +69,7 @@ class CardImageView(context: Context,
                     putViewOnTop()
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    setBits()
+                    setOnMove(true)
                     val mx = event.rawX - lastX
                     val my = event.rawY - lastY
                     x+=mx
@@ -81,7 +79,7 @@ class CardImageView(context: Context,
                 }
                 MotionEvent.ACTION_UP -> {
                     resetPosition()
-                    clearBits()
+                    setOnMove(false)
                     resetZ()
                 }
                 /*
@@ -89,17 +87,20 @@ class CardImageView(context: Context,
                 MotionEvent.ACTION_POINTER_UP -> {}
                 MotionEvent.ACTION_CANCEL -> {}
                 */
+                MotionEvent.ACTION_CANCEL -> {
+                    implicitResetCardPosition()
+                }
             }
         }
         return true
     }
 
-    private fun isDoubleTap():Boolean{
-        return System.currentTimeMillis()-leftLastClick<=CLICK_RATIO
+    private fun setOnMove(value:Boolean){
+        onMove = value
     }
 
-    private fun setDoubleTapTimer(){
-        leftLastClick = System.currentTimeMillis()
+    private fun resetZ(){
+        z = lastZ
     }
 
     private fun storeZ(){
@@ -110,28 +111,15 @@ class CardImageView(context: Context,
         z = 1.0f
     }
 
-    private fun resetZ(){
-        z = lastZ
-    }
-
-    private fun setBits(){
-        onMove = true
-    }
-
-    private fun clearBits(){
-        onMove = false
-    }
-
     private fun resetPosition(){
-        if(!callbackHide(this) && onMove){
+        if(!callbackHide(this)){
             val newCell = callbackRePosition(this)
             if(newCell!=null){
                 setNewPosition(newCell)
                 return
             }
         }
-        x = boardCell.x
-        y = boardCell.y
+       implicitResetCardPosition()
     }
 
     fun implicitResetCardPosition(){

@@ -217,18 +217,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        resetViewsOnPause()
-        //printToTerminal("OnPause")
+        printToTerminal("OnPause")
     }
 
     override fun onStop() {
         super.onStop()
-        //printToTerminal("OnStop")
+        printToTerminal("OnStop")
     }
 
     override fun onResume() {
         super.onResume()
-        //printToTerminal("OnResume")
+        printToTerminal("OnResume")
     }
 
     override fun onDestroy() {
