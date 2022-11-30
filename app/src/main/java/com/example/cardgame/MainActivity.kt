@@ -25,7 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var gameTimer:GameTime
-    private lateinit var deckOfCards : DeckOfCards
+    private lateinit var deckOfCards:DeckOfCards
     private lateinit var gameBoard:GameBoard
     private lateinit var infoToUser:ToastMessage
     private lateinit var bottomNavMenu:BottomNavigationView
@@ -50,6 +50,10 @@ class MainActivity : AppCompatActivity() {
         setAppEnvVariables(this)
         checkForCertications()
     }
+
+    //      #############################################################################
+    //                                  INIT WIDGETS AND STRUCTS
+    //      #############################################################################
 
     private fun setGameTimer(){
         gameTimer = GameTime()
@@ -80,6 +84,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    //      #############################################################################
+    //                                  SET EVENT-LISTENER
+    //      #############################################################################
+
     private fun setEventListener(){
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
@@ -99,28 +107,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun addNewView(parameter:Any?){
-        val cardsToAdd:Int = parameter as Int
-        if(cardsDrawn > getCardsInADeck()-cardsToAdd){
-            informUser("No More Cards To Draw...")
-            return
-        }
-        if(!gameTimer.getClockIsStarted()){return}
-        clearStack()
-        var i = 0
-        while(i<cardsToAdd){
-            val boardCell = gameBoard.getFreeBoardCell(i)
-            val cardInfo = deckOfCards.getNextCardInDeck()
-            binding.cardViewLayout.addView(
-                CardImageView(this,null,cardInfo,boardCell!!,::removeCardView,::hideCardView,::cardViewIsFree,::cardViewRePosition),
-                binding.cardViewLayout.childCount)
-            i++
-            cardsDrawn++
-        }
-        if(cardsDrawn == getCardsInADeck()*getDecksToUse()){
-            gameBoard.setAllCardsDrawn(true)
-        }
-    }
+    //      #############################################################################
+    //                                  HANDLE NEW SCREENS
+    //      #############################################################################
 
     private fun navigateFragment(fragment:Fragment){
         supportFragmentManager.beginTransaction().apply {
@@ -136,19 +125,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun launchWinnerScreen(){
+        stopClock()
+        switchNavBarOnTouch(false)
+        navigateFragment(WinnerFragment(gameTimer.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
+    }
+
+    private fun launchHighScoreScreen(){
+        navigateFragment(HighScoreFragment())
+        getHighScoreFromServer()
+
+    }
+
+    //      #############################################################################
+    //                                  MESSAGE TO USER
+    //      #############################################################################
+
     private fun informUser(message:String){
         infoToUser.showMessage(message,Toast.LENGTH_SHORT)
     }
 
-    private fun askForNewGame(parameter:Any?){
-        if(firstRun){
-            firstRun = false
-            playerStartNewGame(null)
-        }
-        else{
-            MessageToUser(this,null,null,::playerStartNewGame,"Start New Game?")
-        }
-    }
+
+    //      #############################################################################
+    //                                  RESET OPERATIONS
+    //      #############################################################################
 
     private fun resetFirstRun(){
         firstRun = true
@@ -181,28 +181,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun resetViewsOnPause(){
-        var i = childrenToNotRemove
-        val childCount = binding.cardViewLayout.childCount
-        while(i<childCount){
-            val cardImageView = binding.cardViewLayout.getChildAt(i)
-            if(cardImageView is CardImageView){cardImageView.implicitResetCardPosition()}
-            i++
-        }
-    }
-
-    private fun launchWinnerScreen(){
-        stopClock()
-        switchNavBarOnTouch(false)
-        navigateFragment(WinnerFragment(gameTimer.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
-    }
-
-    private fun launchHighScoreScreen(){
-        navigateFragment(HighScoreFragment())
-        getHighScoreFromServer()
-
-    }
-
     private fun switchNavBarOnTouch(value:Boolean){
         bottomNavMenu.menu.forEach { it.isEnabled = value }
     }
@@ -215,19 +193,23 @@ class MainActivity : AppCompatActivity() {
         clearCardViewsFromLayout()
     }
 
+    //      #############################################################################
+    //                                  ON APP CLOSE/OPEN
+    //      #############################################################################
+
     override fun onPause() {
         super.onPause()
-        printToTerminal("OnPause")
+        //printToTerminal("OnPause")
     }
 
     override fun onStop() {
         super.onStop()
-        printToTerminal("OnStop")
+        //printToTerminal("OnStop")
     }
 
     override fun onResume() {
         super.onResume()
-        printToTerminal("OnResume")
+        //printToTerminal("OnResume")
     }
 
     override fun onDestroy() {
@@ -237,7 +219,49 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    //    ############################ CALLBACKS ############################
+    //      #############################################################################
+    //                                  CALLBACKS
+    //      #############################################################################
+
+    /**
+     *              ADD NEW CARD TO THE TABLE (4ST)
+     * */
+    private fun addNewView(parameter:Any?){
+        val cardsToAdd:Int = parameter as Int
+        if(cardsDrawn > getCardsInADeck()-cardsToAdd){
+            informUser("No More Cards To Draw...")
+            return
+        }
+        if(!gameTimer.getClockIsStarted()){return}
+        clearStack()
+        var i = 0
+        while(i<cardsToAdd){
+            val boardCell = gameBoard.getFreeBoardCell(i)
+            val cardInfo = deckOfCards.getNextCardInDeck()
+            binding.cardViewLayout.addView(
+                CardImageView(this,null,cardInfo,boardCell!!,::removeCardView,::hideCardView,::cardViewIsFree,::cardViewRePosition),
+                binding.cardViewLayout.childCount)
+            i++
+            cardsDrawn++
+        }
+        if(cardsDrawn == getCardsInADeck()*getDecksToUse()){
+            gameBoard.setAllCardsDrawn(true)
+        }
+    }
+
+    /**
+     *              ASK USER FOR A NEW GAME
+     * */
+    private fun askForNewGame(parameter:Any?){
+        if(firstRun){
+            firstRun = false
+            playerStartNewGame(null)
+        }
+        else{
+            MessageToUser(this,null,null,::playerStartNewGame,"Start New Game?")
+        }
+    }
+
 
     /**
      *              SEND SCORE TO SERVER IF NEEDED CERTIFICATES IS PRESENT AND

@@ -78,7 +78,7 @@ class CardImageView(context: Context,
                     lastY = event.rawY
                 }
                 MotionEvent.ACTION_UP -> {
-                    resetPosition()
+                    cardToTakeAction()
                     setOnMove(false)
                     resetZ()
                 }
@@ -88,7 +88,8 @@ class CardImageView(context: Context,
                 MotionEvent.ACTION_CANCEL -> {}
                 */
                 MotionEvent.ACTION_CANCEL -> {
-                    implicitResetCardPosition()
+                    resetCardPosition()
+                    setOnMove(false)
                 }
             }
         }
@@ -111,7 +112,7 @@ class CardImageView(context: Context,
         z = 1.0f
     }
 
-    private fun resetPosition(){
+    private fun cardToTakeAction(){
         if(!callbackHide(this)){
             val newCell = callbackRePosition(this)
             if(newCell!=null){
@@ -119,10 +120,10 @@ class CardImageView(context: Context,
                 return
             }
         }
-       implicitResetCardPosition()
+        resetCardPosition()
     }
 
-    fun implicitResetCardPosition(){
+    fun resetCardPosition(){
         x = boardCell.x
         y = boardCell.y
         z = lastZ
