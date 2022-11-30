@@ -14,7 +14,7 @@ class CardImageView(context: Context,
                     private var cardInfo:CardInfo,
                     var boardCell:BoardCell,
                     val callbackDestroy:(CardImageView)->Unit,
-                    val callbackHide:(CardImageView)->Unit,
+                    val callbackHide:(CardImageView)->Boolean,
                     val callbackTouch:(CardImageView)->Boolean,
                     val callbackRePosition:(CardImageView)->BoardCell?) : AppCompatImageView(context, attrs){
     private var lastX:Float = 0.0f
@@ -59,28 +59,16 @@ class CardImageView(context: Context,
         if(hiddenCard){return false}
         if(callbackTouch(this)){
             //printToTerminal("${event.rawX} ${event.rawY} ${event.x} ${event.y} $x $y $width $height")
-            val pointerIndex = event.actionIndex
-            val pointerId = event.getPointerId(pointerIndex)
-            val maskedAction = event.actionMasked
-            val touchAction = event.action and MotionEvent.ACTION_MASK
-            //printToTerminal("$maskedAction")
-            when(maskedAction) {
+            //val pointerIndex = event.actionIndex
+            //val pointerId = event.getPointerId(pointerIndex)
+            //val maskedAction = event.actionMasked
+            //val touchAction = event.action and MotionEvent.ACTION_MASK
+            when(event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    if(isDoubleTap()){
-                        hideSelfFromParent()
-                    }
-                    else{
-                        lastX = event.rawX
-                        lastY = event.rawY
-                    }
-                    //printToTerminal("$z")
+                    lastX = event.rawX
+                    lastY = event.rawY
                     storeZ()
                     putViewOnTop()
-                    //printToTerminal("TouchDown")
-                }
-                MotionEvent.ACTION_POINTER_DOWN -> {
-                    //printToTerminal("PointerDown")
-
                 }
                 MotionEvent.ACTION_MOVE -> {
                     setBits()
@@ -90,23 +78,18 @@ class CardImageView(context: Context,
                     y+=my
                     lastX = event.rawX
                     lastY = event.rawY
-                    //printToTerminal("TouchMove")
                 }
                 MotionEvent.ACTION_UP -> {
-                    setDoubleTapTimer()
                     resetPosition()
                     clearBits()
                     resetZ()
-                    //printToTerminal("TouchUp")
                 }
-                MotionEvent.ACTION_POINTER_UP -> {
-                    //printToTerminal("PointerUp")
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    //printToTerminal("TouchCancel")
-                }
+                /*
+                MotionEvent.ACTION_POINTER_DOWN -> {}
+                MotionEvent.ACTION_POINTER_UP -> {}
+                MotionEvent.ACTION_CANCEL -> {}
+                */
             }
-            //invalidate()
         }
         return true
     }
@@ -140,20 +123,15 @@ class CardImageView(context: Context,
     }
 
     private fun resetPosition(){
-        if(onMove){
+        if(!callbackHide(this) && onMove){
             val newCell = callbackRePosition(this)
             if(newCell!=null){
                 setNewPosition(newCell)
                 return
             }
-            x = boardCell.x
-            y = boardCell.y
         }
-
-    }
-
-    private fun hideSelfFromParent(){
-        callbackHide(this)
+        x = boardCell.x
+        y = boardCell.y
     }
 
     fun implicitResetCardPosition(){

@@ -21,11 +21,10 @@ import com.example.cardgame.methods.*
 import com.example.cardgame.struct.*
 import com.example.cardgame.threading.executeNewThread
 import com.example.cardgame.views.CardImageView
-import com.example.cardgame.views.CounterTextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var counterTxt: CounterTextView
+    private lateinit var gameTimer:GameTime
     private lateinit var deckOfCards : DeckOfCards
     private lateinit var gameBoard:GameBoard
     private lateinit var infoToUser:ToastMessage
@@ -35,18 +34,29 @@ class MainActivity : AppCompatActivity() {
     private var cardsDrawn : Int = 0
     private var currentFragment: Fragment? = null
     private var firstRun:Boolean = true
+    private var childrenToNotRemove:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //logScreenDimensions()
         loadCards()
+        setGameTimer()
         setUpGameBoard()
         setDataBinding()
         setUpInfoToUser()
         setUpNavMenu()
+        setChildrenNotToRemove()
         setEventListener()
         setAppEnvVariables(this)
         checkForCertications()
+    }
+
+    private fun setGameTimer(){
+        gameTimer = GameTime()
+    }
+
+    private fun setChildrenNotToRemove(){
+        childrenToNotRemove = binding.cardViewLayout.childCount
     }
 
     private fun setUpNavMenu(){
@@ -74,7 +84,6 @@ class MainActivity : AppCompatActivity() {
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
         val reverseBtn = binding.reverseBtn
-        counterTxt = binding.counterTxtView
 
         dealCardBtn.setCallback(getCardsToDraw(),::addNewView)
         newGameBtn.setCallback(null,::askForNewGame)
@@ -96,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             informUser("No More Cards To Draw...")
             return
         }
-        if(!counterTxt.getClockIsStarted()){return}
+        if(!gameTimer.getClockIsStarted()){return}
         clearStack()
         var i = 0
         while(i<cardsToAdd){
@@ -137,8 +146,7 @@ class MainActivity : AppCompatActivity() {
             playerStartNewGame(null)
         }
         else{
-            stopClock()
-            MessageToUser(this,null,null,::playerStartNewGame,::playerResumeGame,"Start New Game?")
+            MessageToUser(this,null,null,::playerStartNewGame,"Start New Game?")
         }
     }
 
@@ -155,29 +163,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startClock(){
-        counterTxt.setClockIsStarted(true)
-        if(!counterTxt.getAborted()){executeNewThread(counterTxt)}
+        gameTimer.setClockIsStarted(true)
     }
 
     private fun stopClock(){
-        counterTxt.setClockIsStarted(false)
-        counterTxt.stopActivity()
+        gameTimer.setClockIsStarted(false)
     }
 
     private fun clearCardViewsFromLayout(){
-        while(binding.cardViewLayout.childCount>1){
-            var i = 1
+        while(binding.cardViewLayout.childCount>childrenToNotRemove){
+            var i = childrenToNotRemove
             val childCount = binding.cardViewLayout.childCount
             while(i<childCount){
                 binding.cardViewLayout.removeView(binding.cardViewLayout.getChildAt(i))
                 i++
             }
-            if(childCount==1){break}
         }
     }
 
     private fun resetViewsOnPause(){
-        var i = 0
+        var i = childrenToNotRemove
         val childCount = binding.cardViewLayout.childCount
         while(i<childCount){
             val cardImageView = binding.cardViewLayout.getChildAt(i)
@@ -189,7 +194,7 @@ class MainActivity : AppCompatActivity() {
     private fun launchWinnerScreen(){
         stopClock()
         switchNavBarOnTouch(false)
-        navigateFragment(WinnerFragment(counterTxt.getAborted(),counterTxt.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
+        navigateFragment(WinnerFragment(gameTimer.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
     }
 
     private fun launchHighScoreScreen(){
@@ -206,30 +211,29 @@ class MainActivity : AppCompatActivity() {
         cardsDrawn = 0
         gameBoard.resetBoard()
         deckOfCards.resetDeck()
-        counterTxt.resetClock()
+        gameTimer.resetClock()
         clearCardViewsFromLayout()
     }
 
     override fun onPause() {
-        // TODO HANDLE STUFF THAT NEEDS TO BE HANDLED
         super.onPause()
         resetViewsOnPause()
-        printToTerminal("OnPause")
+        //printToTerminal("OnPause")
     }
 
     override fun onStop() {
         super.onStop()
-        printToTerminal("OnStop")
+        //printToTerminal("OnStop")
     }
 
     override fun onResume() {
         super.onResume()
-        printToTerminal("OnResume")
+        //printToTerminal("OnResume")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        printToTerminal("OnDestroy")
+        //printToTerminal("OnDestroy")
         _binding = null
     }
 
@@ -323,14 +327,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *              RESUME GAME IF USER CLICK NO
-     * */
-    private fun playerResumeGame(parameter:Any?){
-        startClock()
-    }
-
-
-    /**
      *              START NEW GAME IF USER CLICK YES AND RESTART CLOCK
      * */
     private fun playerStartNewGame(parameter:Any?){
@@ -357,13 +353,15 @@ class MainActivity : AppCompatActivity() {
      *              HIDE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
      *              IF ALL CARDS IS DRAWN, CHECK FOR A WINNING MOVE
      * */
-    private fun hideCardView(cardView: CardImageView):Unit{
+    private fun hideCardView(cardView: CardImageView):Boolean{
         if(gameBoard.validRemove(cardView)){
             cardView.hideCardTemporary()
-            if(!gameBoard.detectWinner()){
+            if(gameBoard.detectWinner()){
                 launchWinnerScreen()
             }
+            return true
         }
+        return false
     }
 
     /**
