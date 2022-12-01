@@ -165,8 +165,7 @@ class ApiHandler(val context: Context,
     * if httpsCon.doOutput is set to true it doesn't matter
     * if we set httpsCon.requestMethod = "GET" it will still make
     * POST request
-    * Thanks to the good people at the Internet I found that out
-    * Otherwise I would still be looking at this function....
+    * Thank you internet for pointing that out
     * */
     private fun executeGetRequest(url:String,token:String):String{
         var outPutData = ""

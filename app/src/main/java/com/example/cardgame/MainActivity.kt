@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deckOfCards:DeckOfCards
     private lateinit var gameBoard:GameBoard
     private lateinit var infoToUser:ToastMessage
+    private lateinit var messageToUser:MessageToUser
     private lateinit var bottomNavMenu:BottomNavigationView
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -77,10 +78,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*
-    * Only reason for this is to prevent multiple Toasts being activated
+    * Only reason for this is to prevent multiple Toasts and messages being activated
     * if the user keeps pressing the deal card button when there are no more cards to be drawn
     * */
     private fun setUpInfoToUser(){
+        messageToUser = MessageToUser(this,null,null)
         infoToUser = ToastMessage(this)
     }
 
@@ -318,7 +320,9 @@ class MainActivity : AppCompatActivity() {
             playerStartNewGame(null)
         }
         else{
-            MessageToUser(this,null,null,::playerStartNewGame,"Start New Game?")
+            messageToUser.setPositiveCallback(::playerStartNewGame)
+            messageToUser.setMessage("Start New Game?")
+            messageToUser.showMessage()
         }
     }
 
@@ -368,8 +372,7 @@ class MainActivity : AppCompatActivity() {
      *              IF THREAD HAS TAKEN TO MUCH TIME AND THE USER SHIFT VIEW -> DO NOTHING
      * */
     private fun populateHighScoreTable(parameter:Any?){
-        // TODO SHOW MESSAGE IF SERVER DISCONNECTED
-        if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
+         if(currentFragment!=null && (currentFragment as IFragment).getFragmentID() == FragmentInstance.FRAGMENT_HIGHSCORE){
             try{
                 Thread.currentThread().apply { this@MainActivity.runOnUiThread(java.lang.Runnable {
                     (currentFragment as IFragment).processWork(parameter)

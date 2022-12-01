@@ -30,6 +30,10 @@ var appEnvironmentVariables:SMHashMap?=null
 
 
 //https://gist.github.com/erickok/7692592
+/*
+* function borrowed from above
+* loads a self signed certificate to send https to server
+* */
 fun loadSSLCert(context:Context):SSLSocketFactory?{
     try {
 
@@ -78,6 +82,10 @@ fun loadSSLCert(context:Context):SSLSocketFactory?{
     return null
 }
 
+/*
+* write output stream
+* used by executePostRequest method inside apihandler
+* */
 fun writeOutPutStream(streamOut:HttpsURLConnection,postData:ByteArray){
     val wr = DataOutputStream(streamOut.outputStream)
     try{wr.write(postData)}
@@ -85,6 +93,10 @@ fun writeOutPutStream(streamOut:HttpsURLConnection,postData:ByteArray){
     finally{wr.close()}
 }
 
+/*
+* reads inputstream
+* used by both get and post request
+* */
 fun readInputStream(streamIn:HttpsURLConnection):String{
     var line:String?
     var outPutData=""
@@ -96,6 +108,13 @@ fun readInputStream(streamIn:HttpsURLConnection):String{
     return outPutData
 }
 
+/*
+* reads login credentials from file
+* and stores them inside a map
+* if file is missing app will still
+* function but instead of results from server
+* you get an exception dialog showing whats missing
+* */
 fun setAppEnvVariables(context: Context,){
     val envPath = "environment/env"
     val fRead:InputStream?
@@ -121,6 +140,9 @@ fun setAppEnvVariables(context: Context,){
     reader.close()
 }
 
+/*
+* returns value from previous set map
+* */
 fun getEnv(key:String) : String? {
     if(appEnvironmentVariables!=null){
         val envValue = appEnvironmentVariables!!.getValue(key)
@@ -129,7 +151,10 @@ fun getEnv(key:String) : String? {
     return null
 }
 
-
+/*
+* reads image from assets folder and
+* returns bitmap to CardImageView
+* */
 fun getPlayingCardBitMap(context: Context, filePath: String) : Bitmap {
     //printToTerminal("$needScaling")
     /*val imagePath = "./assets/cards/clubs_2.png"*/
@@ -144,6 +169,10 @@ fun getPlayingCardBitMap(context: Context, filePath: String) : Bitmap {
     return img
 
 }
+
+/*
+* a bunch of different print functions
+* */
 
 fun logScreenDimensions(){
     Log.d("ScreenDimensions","Width: ${getScreenWidth()} Height: ${getScreenHeight()}")
