@@ -5,6 +5,10 @@ import com.example.cardgame.methods.*
 import com.example.cardgame.struct.*
 import com.example.cardgame.views.CardImageView
 
+
+/*
+* The main class to handle gamerelated events
+* */
 class GameBoard(private var rows:Int,private var columns:Int) {
     private var size : Int = 0
     private var m: Array<BoardCell>
@@ -16,6 +20,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         buildCardPosition()
     }
 
+    /*
+    * Build an array of BoardCell with coordinates to later draw cards on
+    * */
     private fun buildCardPosition(){
         val offsetWidth = getOffsetXBetweenCards()
         val offsetHeight = getOffsetYBetweenCards()
@@ -36,6 +43,12 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
     }
 
+    /*
+    * when the user lets go of a card this function checks if
+    * the card can move to a free spot on the board
+    * It basically finds the closest column to the card and check if
+    * that row is empty
+    * */
     fun findClosestPoint(cardView: CardImageView):BoardCell?{
         val currentX:Float = cardView.x
         val rangeCheck = RangeCheck()
@@ -57,6 +70,13 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return null
     }
 
+    /*
+    * if the user tries to remove a card this function takes a look
+    * on every bottom card (in each column) and checks if their
+    * is a card within the same family to match against
+    * if it finds a card with a higher value we return true
+    * otherwise we return false
+    * */
     fun validRemove(cardView: CardImageView):Boolean{
         val cardToTest:BoardCell = cardView.boardCell
         val row = getRowFromIndex(cardToTest.index)
@@ -71,20 +91,35 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return false
     }
 
+    /*
+    * In order to reverse we keep track on every move the user does
+    * it currently supports move and remove (on new card we clear)
+    * * */
     private fun pushMoveToStack(cardView: CardImageView,op:StackOperation){
         reverseStack.push(ReverseOperation(cardView,cardView.boardCell,op))
     }
 
+    /*
+    * when the user push the reverse button we remove that operation from the list
+    * and update the board with whatever the user did
+    * */
     fun popMoveFromStack(){
         reverseStack.pop()
     }
 
+    /*
+    * clears the reverse list and also removes card currently
+    * up till now we have only been hiding the card on the board
+    * */
     fun clearStack(){
         reverseStack.removeHiddenCards()
         reverseStack.clearStack()
         //reverseStack = ReverseStack()
     }
 
+    /*
+    * verify that the card with touchevent is at the bottom of the row
+    * */
     fun validTouch(index:Int):Boolean{
         val row = getRowFromIndex(index)
         val col = getColFromIndex(index)
@@ -92,6 +127,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return false
     }
 
+    /*
+    * helper function to valid touch
+    * */
     private fun searchDirection(cellRow:Int,cellCol:Int,dir: Direction,cardToRemove:BoardCell,cardSum:PassedCheck){
         if(cardSum.num==0 && (cellCol>=0 && cellCol < columns)){
             if(dir == Direction.WEST){searchDirection(cellRow,cellCol-1,dir,cardToRemove,cardSum)}
@@ -105,6 +143,10 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
     }
 
+    /*
+    * Match card against another
+    * Same Family and lower value is needed to be removed
+    * */
     private fun cardCanBeRemoved(cellToRemove:BoardCell,cellToTestAgainst:BoardCell):Boolean{
         if(cardFamilyEquals(cellToRemove.playingCard,cellToTestAgainst.playingCard)){
             return cardIsLess(cellToRemove.playingCard,cellToTestAgainst.playingCard)
@@ -112,6 +154,11 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return false
     }
 
+    /*
+    * If their are no more card to draw we check this function on every removed card
+    * check if the user has won. Return true if their is only 4 cards on the table
+    * and they are all aces
+    * */
     fun detectWinner():Boolean{
         if(!getAllCardsDrawn()){return false}
 
@@ -124,7 +171,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         }
         return countAce == getWinningCount()
     }
-
+    /*
+    * helper function to valid touch -> searchdirection
+    * */
     private fun getLastCellInRow(index:Int):BoardCell{
         var currentIndex = index
         var nextIndex = index+columns
@@ -137,6 +186,9 @@ class GameBoard(private var rows:Int,private var columns:Int) {
         return m[currentIndex]
     }
 
+    /*
+    * reset the board
+    * */
     fun resetBoard(){
         setAllCardsDrawn(false)
         clearStack()

@@ -20,6 +20,11 @@ class DeckOfCards{
         shuffledDeck = List(numCards){ CardInfo() }
     }
 
+    /*
+    * Loop through number of cards being used
+    * pick one random playing-card and update current card with that value
+    * put the random number inside the tree to prevent being used again
+    * */
     private fun shuffleDeck(){
         val deckOfCards = PlayingCard.values()
         val treeOfPlayingCards = BinarySearchTree()

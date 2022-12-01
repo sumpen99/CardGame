@@ -2,6 +2,13 @@ package com.example.cardgame.struct
 import com.example.cardgame.enums.StackOperation
 import com.example.cardgame.io.printToTerminal
 
+/*
+* Simple linkedlist with the intention of keeping track of
+* action taken by the user
+* Valid reverse operations is move a card to previous position and regret a
+* removed card
+* when new cards being added their is not possibility to reverse
+* */
 class ReverseStack {
     var root:ReverseOperation?=null
 

@@ -4,6 +4,11 @@ import com.example.cardgame.io.printToTerminal
 
 private var listOfTBF:HashMap<Long,TBF> = hashMapOf()
 
+
+/*
+* Executes on a new thread
+* Takes in an object with the IThreading implementation
+* */
 fun executeNewThread(obj: IThreading) {
     if(obj.getCallbackStatus()){ return}
     val tbf = TBF(obj)

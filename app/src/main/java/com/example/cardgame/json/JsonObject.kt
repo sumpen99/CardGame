@@ -13,6 +13,11 @@ import com.example.cardgame.struct.TableRowValues
 //{"token":"00ae00c000a0fcb000d3d4598bac4c84e22474ce"}
 //[{"id":2,"name":"Fredrik","score":100},{"id":3,"name":"Johan","score":99},...]
 //{"id":2,"name":"Fredrik","score":100}
+/*
+*   A fun way to parse a string but i guess its highly inefficient and
+*   probably wont work on random json-files. But on the data we are expecting
+*   we get the result we are looking for
+* */
 class JsonObject(var rawData:String) {
     var objMap:SMHashMap
     lateinit var objList:JsonList

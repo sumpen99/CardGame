@@ -13,6 +13,12 @@ import java.nio.charset.StandardCharsets
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLSocketFactory
 
+
+/*
+* Class that runs on a second thread
+* Executes Get/Post requests
+* Login credentials is needed to access server
+* */
 class ApiHandler(val context: Context,
                  var args:Array<String>?=null,
                  var apiFunc: ApiFunction?):IThreading {
@@ -33,6 +39,10 @@ class ApiHandler(val context: Context,
         showResponseCode = callback
     }
 
+    /*
+    * App apilevel was set to 21 but this function pushed it up to 23
+    * We check this one before trying to make https call
+    * */
     fun checkInternetConnectivity():Boolean{
         val connectivityManager:ConnectivityManager? = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (connectivityManager != null) {
@@ -62,6 +72,9 @@ class ApiHandler(val context: Context,
         args = arguments
     }
 
+    /*
+    * login to server to gain token
+    * */
     private fun login():String?{
         val url = getEnv("tokenAuth")
         if(url!=null){
@@ -77,6 +90,9 @@ class ApiHandler(val context: Context,
         return null
     }
 
+    /*
+    * if successful login we send name and score to server
+    * */
     private fun urlUploadHighScore(){
         val token = login()
         var url: String? = getEnv("uploadNewHighScoreUrl")
@@ -91,6 +107,9 @@ class ApiHandler(val context: Context,
         }
     }
 
+    /*
+    * if successful login we get highscore names/score back
+    * */
     private fun urlGetHighScore() {
         val token = login()
         val url: String? = getEnv("getHighScoreUrl")
@@ -106,6 +125,10 @@ class ApiHandler(val context: Context,
         }
     }
 
+    /*
+    * The server uses a selfsigned ssl certificate
+    * loadssl handels that
+    * */
     private fun executePostRequest(parameters: String, url: String): String {
         val postData: ByteArray = parameters.toByteArray(StandardCharsets.UTF_8)
         val postDataLength = postData.size
@@ -138,6 +161,13 @@ class ApiHandler(val context: Context,
         return outPutData
     }
 
+    /*
+    * if httpsCon.doOutput is set to true it doesn't matter
+    * if we set httpsCon.requestMethod = "GET" it will still make
+    * POST request
+    * Thanks to the good people at the Internet I found that out
+    * Otherwise I would still be looking at this function....
+    * */
     private fun executeGetRequest(url:String,token:String):String{
         var outPutData = ""
         try{
@@ -172,6 +202,10 @@ class ApiHandler(val context: Context,
         return connectionDisconnected
     }
 
+    /*
+    * Close the connection if the server has not respond in MAX_RESPONSE_TIME
+    * I did not find a built in function for this but maybe their is one?
+    * */
     private fun closeConnectionIfNeeded(){
         try{ Thread(Runnable {
             Thread.sleep(MAX_RESPONSE_TIME)
@@ -185,7 +219,9 @@ class ApiHandler(val context: Context,
         setCallbackStatus(false)
     }
 
-    // TODO START TIMER TO DISCONNECT?
+    /*
+    * This function is run by threadhandler onRun
+    * */
     override fun startActivity() {
         closeConnectionIfNeeded()
         when(apiFunc!!){

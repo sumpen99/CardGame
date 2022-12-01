@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //logScreenDimensions()
         loadCards()
         setGameTimer()
         setUpGameBoard()
@@ -55,22 +54,39 @@ class MainActivity : AppCompatActivity() {
     //                                  INIT WIDGETS AND STRUCTS
     //      #############################################################################
 
+    /*
+    * Timer used to count score if the user win
+    * */
     private fun setGameTimer(){
         gameTimer = GameTime()
     }
 
+    /*
+    * Used to prevent the logo in the middle of the screen to be removed
+    * whenever we start a new game and clear the screen
+    * */
     private fun setChildrenNotToRemove(){
         childrenToNotRemove = binding.cardViewLayout.childCount
     }
 
+    /*
+    * Bottomnavigation menu
+    * */
     private fun setUpNavMenu(){
         bottomNavMenu = binding.bottomNavigationView
     }
 
+    /*
+    * Only reason for this is to prevent multiple Toasts being activated
+    * if the user keeps pressing the deal card button when there are no more cards to be drawn
+    * */
     private fun setUpInfoToUser(){
         infoToUser = ToastMessage(this)
     }
 
+    /*
+    * This class handles positioning of the cards and check valid moves osv
+    * */
     private fun setUpGameBoard(){
         gameBoard = GameBoard(getBoardRows(),getBoardCols())
     }
@@ -79,6 +95,10 @@ class MainActivity : AppCompatActivity() {
         deckOfCards = DeckOfCards()
     }
 
+    /*
+    * One way I found to access widgets by id
+    * AndroidStudio sometimes gives import errors but they can be ignored
+    * */
     private fun setDataBinding(){
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -88,6 +108,9 @@ class MainActivity : AppCompatActivity() {
     //                                  SET EVENT-LISTENER
     //      #############################################################################
 
+    /*
+    * Set up buttons with respective callback-function
+    * */
     private fun setEventListener(){
         val dealCardBtn = binding.dealCardBtn
         val newGameBtn = binding.newGameBtn
@@ -111,6 +134,9 @@ class MainActivity : AppCompatActivity() {
     //                                  HANDLE NEW SCREENS
     //      #############################################################################
 
+    /*
+    * Navigate between frames and keep track of which one is launched
+    * */
     private fun navigateFragment(fragment:Fragment){
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.mainLayout,fragment).commit()
@@ -118,6 +144,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    * Remove current fragment and return to main screen
+    * */
     private fun removeCurrentFragment(){
         if(currentFragment!=null){
             supportFragmentManager.beginTransaction().remove(currentFragment!!).commit()
@@ -125,12 +154,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    * If we have a winner navigate to winnerscreen
+    * Tell bottom menu to not activate functions on pressed button
+    * */
     private fun launchWinnerScreen(){
         stopClock()
         switchNavBarOnTouch(false)
         navigateFragment(WinnerFragment(gameTimer.getTimeTaken(),::closeWinnerScreen,::sendScoreToServer))
     }
 
+    /*
+    * Make call to server and populate highscore table with data
+    * If credentials is missing the frame still opens but a toastmessage with error is also shown
+    * */
     private fun launchHighScoreScreen(){
         navigateFragment(HighScoreFragment())
         getHighScoreFromServer()
@@ -141,6 +178,9 @@ class MainActivity : AppCompatActivity() {
     //                                  MESSAGE TO USER
     //      #############################################################################
 
+    /*
+    * Show message
+    * */
     private fun informUser(message:String){
         infoToUser.showMessage(message,Toast.LENGTH_SHORT)
     }
@@ -150,14 +190,23 @@ class MainActivity : AppCompatActivity() {
     //                                  RESET OPERATIONS
     //      #############################################################################
 
+    /*
+    * Used to skip messagedialog AskForNewGame when its not needed
+    * */
     private fun resetFirstRun(){
         firstRun = true
     }
 
+    /*
+    * Clears the backtrack list every time the user deals new cards
+    * */
     private fun clearStack(){
         gameBoard.clearStack()
     }
 
+    /*
+    * When the reverse button is pressed
+    * */
     private fun reverseLastMove(parameter:Any?){
         gameBoard.popMoveFromStack()
     }
@@ -170,6 +219,11 @@ class MainActivity : AppCompatActivity() {
         gameTimer.setClockIsStarted(false)
     }
 
+    /*
+    * If we start a new game we need to clear the board from current ImageViews
+    * It does not work properly without the outer loop
+    * childrenToNotRemove is every child set inside the layout file ( logo in the middle)
+    * */
     private fun clearCardViewsFromLayout(){
         while(binding.cardViewLayout.childCount>childrenToNotRemove){
             var i = childrenToNotRemove
@@ -181,10 +235,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    * Sets functionality on touch
+    * */
     private fun switchNavBarOnTouch(value:Boolean){
         bottomNavMenu.menu.forEach { it.isEnabled = value }
     }
 
+    /*
+    * reset stuff that needs to be reset
+    * */
     private fun resetProgram(){
         cardsDrawn = 0
         gameBoard.resetBoard()
@@ -223,7 +283,7 @@ class MainActivity : AppCompatActivity() {
     //                                  CALLBACKS
     //      #############################################################################
 
-    /**
+    /*
      *              ADD NEW CARD TO THE TABLE (4ST)
      * */
     private fun addNewView(parameter:Any?){
@@ -249,7 +309,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
+    /*
      *              ASK USER FOR A NEW GAME
      * */
     private fun askForNewGame(parameter:Any?){
@@ -263,7 +323,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /**
+    /*
      *              SEND SCORE TO SERVER IF NEEDED CERTIFICATES IS PRESENT AND
      *              INTERNETCONNECTION IS AVAILABLE
      * */
@@ -283,10 +343,9 @@ class MainActivity : AppCompatActivity() {
         closeWinnerScreen(null)
     }
 
-    /**
+    /*
      *              GET HIGHSCORE FROM SERVER IF NEEDED CERTIFICATES IS PRESENT AND
      *              INTERNETCONNECTION IS AVAILABLE
-     *
      * */
     private fun getHighScoreFromServer():Boolean{
         val apiObject = ApiHandler(this,null,null)
@@ -304,10 +363,9 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    /**
+    /*
      *              POPULATE HIGHSCORETABLE WITH DATA (ON MAINTHREAD) WHEN SERVER THREAD IS DONE
      *              IF THREAD HAS TAKEN TO MUCH TIME AND THE USER SHIFT VIEW -> DO NOTHING
-     *
      * */
     private fun populateHighScoreTable(parameter:Any?){
         // TODO SHOW MESSAGE IF SERVER DISCONNECTED
@@ -323,9 +381,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
+    /*
      *              SHOW RESPONSECODE FROM SERVER, MOSTLY FOR TESTING
-     *
      * */
     private fun showApiResponseCode(responseCode:HttpResponse){
         try{
@@ -339,7 +396,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    /**
+    /*
      *              CLOSE FRAGMENT WINNER
      * */
     private fun closeWinnerScreen(parameter:Any?){
@@ -349,7 +406,7 @@ class MainActivity : AppCompatActivity() {
         resetFirstRun()
     }
 
-    /**
+    /*
      *              START NEW GAME IF USER CLICK YES AND RESTART CLOCK
      * */
     private fun playerStartNewGame(parameter:Any?){
@@ -358,21 +415,21 @@ class MainActivity : AppCompatActivity() {
         addNewView(getCardsToDraw())
     }
 
-    /**
+    /*
      *              CHECK IF CARDVIEW CAN MOVE TO A FREE SPOT
      * */
     private fun cardViewRePosition(cardView: CardImageView):BoardCell?{
         return gameBoard.findClosestPoint(cardView)
     }
 
-    /**
+    /*
      *              CHECK IF CARDVIEW WITH TOUCH IS AT BOTTOM OF ROW
      * */
     private fun cardViewIsFree(cardView: CardImageView):Boolean{
         return gameBoard.validTouch(cardView.boardCell.index)
     }
 
-    /**
+    /*
      *              HIDE CARDVIEW FROM GAMEBOARD IF ITS A VALID GAMEMOVE
      *              IF ALL CARDS IS DRAWN, CHECK FOR A WINNING MOVE
      * */
@@ -387,7 +444,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    /**
+    /*
      *              REMOVE CARDVIEW FROM GAMEBOARD
      * */
     private fun removeCardView(cardView: CardImageView){

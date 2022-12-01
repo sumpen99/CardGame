@@ -2,6 +2,13 @@ package com.example.cardgame.tree
 import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.struct.Node
 
+/*
+* As the json-object and SMHashmap this one is also just for educational purposes
+* Its nice to see how data-structures is built up and also good fun when
+* it works.
+* */
+
+
 class BinarySearchTree {
     var root: Node? = null
     private var staticCount : Int = 0

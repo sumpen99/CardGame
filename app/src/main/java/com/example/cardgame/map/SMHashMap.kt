@@ -3,6 +3,12 @@ import com.example.cardgame.enums.EntrieType
 import com.example.cardgame.methods.hashKey
 import com.example.cardgame.struct.Entrie
 
+/*
+* Like the json-object its purely for fun and also a bit educating
+* On apps used by other people built in datastructures is to be recommended
+*
+* */
+
 class SMHashMap(var capacity: Int,var loadFactor: Float) {
     var count = 0
     lateinit var entries:Array<Entrie>
@@ -11,11 +17,11 @@ class SMHashMap(var capacity: Int,var loadFactor: Float) {
         hashmapInit()
     }
 
-    fun hashmapInit() {
+    private fun hashmapInit() {
         entries = Array<Entrie>(capacity){Entrie()}
     }
 
-    fun expandTable() {
+    private fun expandTable() {
         val temp: SMHashMap
         var h1: Entrie?
         var h2: Entrie
@@ -56,12 +62,12 @@ class SMHashMap(var capacity: Int,var loadFactor: Float) {
         if((count / capacity).toFloat() > loadFactor){expandTable()}
     }
 
-    fun addCollision(base: Entrie, item: Entrie) {
+    private fun addCollision(base: Entrie, item: Entrie) {
         item.next = base.next
         base.next = item
     }
 
-    fun extendCollision(base: Entrie, item: Entrie): Entrie? {
+    private fun extendCollision(base: Entrie, item: Entrie): Entrie? {
         var e: Entrie? = null
         if(item.next != null) {
             e = Entrie(item.next!!.key, item.next!!.value, item.next!!.bucket, item.next!!.eType,true)
@@ -71,7 +77,7 @@ class SMHashMap(var capacity: Int,var loadFactor: Float) {
         return e
     }
 
-    fun containsKey(key: String): Boolean {
+    private fun containsKey(key: String): Boolean {
         var e: Entrie?
         val bucket: Int = hashKey(key, capacity)
         if (entries[bucket].set) {

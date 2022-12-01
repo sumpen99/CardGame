@@ -9,6 +9,10 @@ import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.struct.BoardCell
 import com.example.cardgame.struct.CardInfo
 
+
+/*
+* Extended ImageView with some more functionality
+* */
 class CardImageView(context: Context,
                     attrs: AttributeSet?=null,
                     private var cardInfo:CardInfo,
@@ -32,6 +36,9 @@ class CardImageView(context: Context,
         storeZ()
     }
 
+    /*
+    * Reads a card from assets/cards
+    * */
     private fun setBitMap(){
         val bitmap = getPlayingCardBitMap(context,"cards/${cardInfo.path}")
         bitmapWidth = bitmap.width
@@ -39,10 +46,16 @@ class CardImageView(context: Context,
         setImageBitmap(bitmap)
     }
 
+    /*
+    * set the imageview size to current image size
+    * */
     private fun setDimension(){
         layoutParams = ViewGroup.LayoutParams(bitmapWidth,bitmapHeight)
     }
 
+    /*
+    * Position is given from pre-built board inside gameboard class
+    * */
     private fun setPosition(){
         x = boardCell.x
         y = boardCell.y
@@ -53,6 +66,15 @@ class CardImageView(context: Context,
         boardCell.setKeyValue(cardInfo.playingCard)
     }
 
+    /*
+    * if the user has removed the card but not pushed the deal card button
+    * it appears as hidden. In that case we return false
+    * if the card is on the move we dont haft to check the callback on touch function
+    * we set z just so a moving card dont appear below any other card
+    * on touch upp we check if the user want to remove a card or repositioning it
+    * action cancel is needed if the user drags a card on the edge of the screen
+    * if not implemented the card gets the position currently held when that event is fired
+    * */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if(hiddenCard){return false}
         if(onMove || callbackTouch(this)){
@@ -112,6 +134,10 @@ class CardImageView(context: Context,
         z = 1.0f
     }
 
+    /*
+    * when the user drops a card we take look at what action to make
+    * either remove or move it to a free spot (or no action at all)
+    * */
     private fun cardToTakeAction(){
         if(!callbackHide(this)){
             val newCell = callbackRePosition(this)
@@ -123,12 +149,15 @@ class CardImageView(context: Context,
         resetCardPosition()
     }
 
-    fun resetCardPosition(){
+    private fun resetCardPosition(){
         x = boardCell.x
         y = boardCell.y
         z = lastZ
     }
 
+    /*
+    * callback to main where it will be removed
+    * */
     fun removeSelfFromParent(){
         callbackDestroy(this)
     }
