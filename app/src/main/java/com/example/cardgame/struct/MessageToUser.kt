@@ -4,12 +4,17 @@ import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 
-class MessageToUser(val context:Context,val view: View?,val args:Any?){
+class MessageToUser(val context:Context,val view: View?){
 
     private var positiveCallback:((args:Any?)->Unit) ? = null
     private var negativeCallback:((args:Any?)->Unit) ? = null
+    private var callbackArgs:Any? = null
     private var message:String = ""
     private var isOpen:Boolean = false
+
+    private fun setCallbackArgs(args:Any?){
+        callbackArgs = args
+    }
 
     fun setPositiveCallback(callback:(args:Any?)->Unit){
         positiveCallback = callback
@@ -32,11 +37,11 @@ class MessageToUser(val context:Context,val view: View?,val args:Any?){
             setStatusOpen(true)
             val builder:AlertDialog.Builder = AlertDialog.Builder(context)
             val positiveButtonClick = { dialog:DialogInterface,which:Int->
-                if(positiveCallback!=null){ positiveCallback!!(args)}
+                if(positiveCallback!=null){ positiveCallback!!(callbackArgs)}
                 setStatusOpen(false)
             }
             val negativeButtonClick = {dialog:DialogInterface,which:Int->
-                if(negativeCallback!=null){negativeCallback!!(args)}
+                if(negativeCallback!=null){negativeCallback!!(callbackArgs)}
                 setStatusOpen(false)
                 //dialog.cancel()
             }

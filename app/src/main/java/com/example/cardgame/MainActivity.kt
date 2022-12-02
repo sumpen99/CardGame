@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     * if the user keeps pressing the deal card button when there are no more cards to be drawn
     * */
     private fun setUpInfoToUser(){
-        messageToUser = MessageToUser(this,null,null)
+        messageToUser = MessageToUser(this,null)
         infoToUser = ToastMessage(this)
     }
 
@@ -185,6 +185,12 @@ class MainActivity : AppCompatActivity() {
     * */
     private fun informUser(message:String){
         infoToUser.showMessage(message,Toast.LENGTH_SHORT)
+    }
+
+    private fun newGameMessage(){
+        messageToUser.setPositiveCallback(::playerStartNewGame)
+        messageToUser.setMessage("Start New Game?")
+        messageToUser.showMessage()
     }
 
 
@@ -319,11 +325,7 @@ class MainActivity : AppCompatActivity() {
             firstRun = false
             playerStartNewGame(null)
         }
-        else{
-            messageToUser.setPositiveCallback(::playerStartNewGame)
-            messageToUser.setMessage("Start New Game?")
-            messageToUser.showMessage()
-        }
+        else{newGameMessage()}
     }
 
 
