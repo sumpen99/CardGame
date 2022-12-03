@@ -1,6 +1,7 @@
 package com.example.cardgame.board
 import com.example.cardgame.enums.Direction
 import com.example.cardgame.enums.StackOperation
+import com.example.cardgame.io.printToTerminal
 import com.example.cardgame.methods.*
 import com.example.cardgame.struct.*
 import com.example.cardgame.views.CardImageView
@@ -155,22 +156,19 @@ class GameBoard(private var rows:Int,private var columns:Int) {
     }
 
     /*
-    * If their are no more card to draw we check this function on every removed card
-    * check if the user has won. Return true if their is only 4 cards on the table
-    * and they are all aces
+    * If their are no more card to draw we check this function on every removed card to
+    * check if the user has won. Return true if their is only 4 aces left
     * */
     fun detectWinner():Boolean{
         if(!getAllCardsDrawn()){return false}
-
-        var index = columns
-        var countAce = 0
-        while(index<(columns*2)){
-            if(m[index].occupied)return false
-            countAce += if(m[index-columns].playingCard.value == getAceValue()) 1 else 0
+        var index = 0
+        while(index < size){
+            if(m[index].occupied && m[index].playingCard.value != getAceValue()){return false}
             index++
         }
-        return countAce == getWinningCount()
+        return true
     }
+
     /*
     * helper function to valid touch -> searchdirection
     * */
